@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albumul clasei</title>
+    <link rel="shortcut icon" type="image/x-icon" href="imagini/logoCNTV.png" />
+    <link rel="stylesheet" type="text/css" href="style/style.css" />
+    <link href="style/lightbox.css" type="text/css" rel="stylesheet" />
+    <script src="https://unpkg.com/split-type"></script>
+    <script src="script/gsap.min.js" defer></script>
+    <script src="script/ScrollTrigger.min.js" defer></script>
+    <script src="script/lightbox-plus-jquery.min.js" defer></script>
+    <script src="script/script.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <div class="sectiuni">
+            <p id="sectiune_despre" class="active">Clasa XII-A</p>
+            <p id="sectiune_elevi">Elevi</p>
+            <p id="sectiune_contact">Contact</p>
+        </div>
+    </header>
+    <div id="elevi">
+        <div id="next"><img src="style/imagstyle/next.png" draggable="false"></div>
+        <div id="prev"><img src="style/imagstyle/prev.png" draggable="false"></div>
+        <div id="element">
+            <svg enable-background="new 0 0 50 50" height="50px" id="Layer_1" version="1.1" viewBox="0 0 50 50"
+                width="50px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink">
+                <rect fill="none" height="50" width="50" />
+                <line fill="none" stroke="#ffffff " stroke-miterlimit="10" stroke-width="1.5" x1="9" x2="41" y1="25"
+                    y2="25" />
+                <line fill="none" stroke="#ffffff" stroke-miterlimit="10" stroke-width="1.5" x1="25" x2="25" y1="9"
+                    y2="41" />
+            </svg>
+        </div>
+        <div id="image-container" data-mouse-down-at="0" data-prev-percentage="0" data-can-move=false>
+            <img class="image" data-src="imagini/achim2.webp" data-pers="achim" data-text="Achim Andrei-Eduard"
+                src="imagini/achim.webp" data-unmin="imagini/achim.webp" draggable="false" />
+            <img class="image" data-src="imagini/arjoca2.webp" data-pers="arjoca" data-text="Arjoca Alexandra-Narcisa"
+                src="imagini/arjoca.webp" data-unmin="imagini/arjoca.webp" draggable="false" />
+            <img class="image" data-src="imagini/tudor2.webp" data-pers="tudor" data-text="Avram Tudor-Cristian"
+                src="imagini/tudor.webp" data-unmin="imagini/tudor.webp" draggable="false" />
+            <img class="image" data-src="imagini/bala2.webp" data-pers="bala" data-text="Bălă Mihai"
+                src="imagini/bala.webp" data-unmin="imagini/bala.webp" draggable="false" />
+            <img class="image" data-src="imagini/bobei2.webp" data-pers="bobei" data-text="Bobei Nicholas-Paolo"
+                src="imagini/bobei.webp" data-unmin="imagini/bobei.webp" draggable="false" />
+            <img class="image" data-src="imagini/carina2.webp" data-pers="carina" data-text="Ceaușu Carina-Maria"
+                src="imagini/carina.webp" data-unmin="imagini/carina.webp" draggable="false" />
+            <img class="image" data-src="imagini/nicu2.webp" data-pers="nicu" data-text="Cîrlea Nicolae"
+                src="imagini/nicu.webp" data-unmin="imagini/nicu.webp" draggable="false" />
+            <img class="image" data-src="imagini/elena2.webp" data-pers="elena" data-text="Dănăiață Maria-Elena"
+                src="imagini/elena.webp" data-unmin="imagini/elena.webp" draggable="false" />
+            <img class="image" data-src="imagini/davitoiu2.webp" data-pers="davitoiu"
+                data-text="Davițoiu-Dăianu Andreea" src="imagini/davitoiu.webp" data-unmin="imagini/davitoiu.webp"
+                draggable="false" />
+            <img class="image" data-src="imagini/laura2.webp" data-pers="laura" data-text="Dolofan Laura-Elena"
+                src="imagini/laura.webp" data-unmin="imagini/laura.webp" draggable="false" />
+            <img class="image" data-src="imagini/flavius2.webp" data-pers="flavius" data-text="Gengiu Ionuț-Flavius"
+                src="imagini/flavius.webp" data-unmin="imagini/flavius.webp" draggable="false" />
+            <img class="image" data-src="imagini/roxana2.webp" data-pers="roxana" data-text="Ghițan Roxana"
+                src="imagini/roxana.webp" data-unmin="imagini/roxana.webp" draggable="false" />
+            <img class="image" data-src="imagini/daria2.webp" data-pers="daria" data-text="Matei Daria-Sorana"
+                src="imagini/daria.webp" data-unmin="imagini/daria.webp" draggable="false" />
+            <img class="image" data-src="imagini/silviana2.webp" data-pers="silviana"
+                data-text="Mungiu-Pupăzan Silviana-Maria" src="imagini/silviana.webp" data-unmin="imagini/silviana.webp"
+                draggable="false" />
+            <img class="image" data-src="imagini/nanescu2.webp" data-pers="nanescu" data-text="Nănescu Teodor-Ștefan"
+                src="imagini/nanescu.webp" data-unmin="imagini/nanescu.webp" draggable="false" />
+            <img class="image" data-src="imagini/patrascoiu2.webp" data-pers="patrascoiu"
+                data-text="Pătrășcoiu Mihai-Vlad" src="imagini/patrascoiu.webp" data-unmin="imagini/patrascoiu.webp"
+                draggable="false" />
+            <img class="image" data-src="imagini/ovi2.webp" data-pers="ovi" data-text="Pătrașcu Ovidiu-Andrei"
+                src="imagini/ovi.webp" data-unmin="imagini/ovi.webp" draggable="false" />
+            <img class="image" data-src="imagini/david2.webp" data-pers="david" data-text="Petreuș David-Mihai"
+                src="imagini/david.webp" data-unmin="imagini/david.webp" draggable="false" />
+            <img class="image" data-src="imagini/andra2.webp" data-pers="andra" data-text="Pîrvănescu Andra-Georgiana"
+                src="imagini/andra.webp" data-unmin="imagini/andra.webp" draggable="false" />
+            <img class="image" data-src="imagini/miruna2.webp" data-pers="miruna" data-text="Popeangă Ioana-Miruna"
+                src="imagini/miruna.webp" data-unmin="imagini/miruna.webp" draggable="false" />
+            <img class="image" data-src="imagini/bianca2.webp" data-pers="bianca" data-text="Puținelu Bianca-Andreea"
+                src="imagini/bianca.webp" data-unmin="imagini/bianca.webp" draggable="false" />
+            <img class="image" data-src="imagini/delora2.webp" data-pers="delora" data-text="Stăncioiu Delora"
+                src="imagini/delora.webp" data-unmin="imagini/delora.webp" draggable="false" />
+            <img class="image" data-src="imagini/radu2.webp" data-pers="radu" data-text="Tăerel Radu Nicolae"
+                src="imagini/radu.webp" data-unmin="imagini/radu.webp" draggable="false" />
+            <img class="image" data-src="imagini/utzu2.webp" data-pers="utzu" data-text="Tudorescu Ioan-Daniel"
+                src="imagini/utzu.webp" data-unmin="imagini/utzu.webp" draggable="false" />
+            <img class="image" data-src="imagini/ariana2.webp" data-pers="ariana" data-text="Udroiu Ariana-Elena"
+                src="imagini/ariana.webp" data-unmin="imagini/ariana.webp" draggable="false" />
+            <img class="image" data-src="imagini/theo2.webp" data-pers="theo" data-text="Vulpe Theodor"
+                src="imagini/theo.webp" data-unmin="imagini/theo.webp" draggable="false" />
+            <img class="image" data-src="imagini/bogdan2.webp" data-pers="bogdan" data-text="Zamfiroiu Bogdan-Marian"
+                src="imagini/bogdan.webp" data-unmin="imagini/bogdan.webp" draggable="false" />
+            <img class="image" data-src="imagini/tirca2.webp" data-pers="tirca" data-text="Țîrcă Mihaela"
+                src="imagini/tirca.webp" data-unmin="imagini/tirca.webp" draggable="false" />
+            <img class="image" data-src="imagini/achim2.webp" data-pers="achim" data-text="Achim Andrei-Eduard"
+                src="imagini/achim.webp" data-unmin="imagini/achim.webp" draggable="false" />
+            <img class="image" data-src="imagini/arjoca2.webp" data-pers="arjoca" data-text="Arjoca Alexandra-Narcisa"
+                src="imagini/arjoca.webp" data-unmin="imagini/arjoca.webp" draggable="false" />
+            <img class="image" data-src="imagini/tudor2.webp" data-pers="tudor" data-text="Avram Tudor-Cristian"
+                src="imagini/tudor.webp" data-unmin="imagini/tudor.webp" draggable="false" />
+            <img class="image" data-src="imagini/bala2.webp" data-pers="bala" data-text="Bălă Mihai"
+                src="imagini/bala.webp" data-unmin="imagini/bala.webp" draggable="false" />
+            <img class="image" data-src="imagini/bobei2.webp" data-pers="bobei" data-text="Bobei Nicholas-Paolo"
+                src="imagini/bobei.webp" data-unmin="imagini/bobei.webp" draggable="false" />
+            <img class="image" data-src="imagini/carina2.webp" data-pers="carina" data-text="Ceaușu Carina-Maria"
+                src="imagini/carina.webp" data-unmin="imagini/carina.webp" draggable="false" />
+            <img class="image" data-src="imagini/nicu2.webp" data-pers="nicu" data-text="Cîrlea Nicolae"
+                src="imagini/nicu.webp" data-unmin="imagini/nicu.webp" draggable="false" />
+            <img class="image" data-src="imagini/elena2.webp" data-pers="elena" data-text="Dănăiață Maria-Elena"
+                src="imagini/elena.webp" data-unmin="imagini/elena.webp" draggable="false" />
+            <img class="image" data-src="imagini/davitoiu2.webp" data-pers="davitoiu"
+                data-text="Davițoiu-Dăianu Andreea" src="imagini/davitoiu.webp" data-unmin="imagini/davitoiu.webp"
+                draggable="false" />
+            <img class="image" data-src="imagini/laura2.webp" data-pers="laura" data-text="Dolofan Laura-Elena"
+                src="imagini/laura.webp" data-unmin="imagini/laura.webp" draggable="false" />
+            <img class="image" data-src="imagini/flavius2.webp" data-pers="flavius" data-text="Gengiu Ionuț-Flavius"
+                src="imagini/flavius.webp" data-unmin="imagini/flavius.webp" draggable="false" />
+            <img class="image" data-src="imagini/roxana2.webp" data-pers="roxana" data-text="Ghițan Roxana"
+                src="imagini/roxana.webp" data-unmin="imagini/roxana.webp" draggable="false" />
+            <img class="image" data-src="imagini/daria2.webp" data-pers="daria" data-text="Matei Daria-Sorana"
+                src="imagini/daria.webp" data-unmin="imagini/daria.webp" draggable="false" />
+            <img class="image" data-src="imagini/silviana2.webp" data-pers="silviana"
+                data-text="Mungiu-Pupăzan Silviana-Maria" src="imagini/silviana.webp" data-unmin="imagini/silviana.webp"
+                draggable="false" />
+            <img class="image" data-src="imagini/nanescu2.webp" data-pers="nanescu" data-text="Nănescu Teodor-Ștefan"
+                src="imagini/nanescu.webp" data-unmin="imagini/nanescu.webp" draggable="false" />
+            <img class="image" data-src="imagini/patrascoiu2.webp" data-pers="patrascoiu"
+                data-text="Pătrășcoiu Mihai-Vlad" src="imagini/patrascoiu.webp" data-unmin="imagini/patrascoiu.webp"
+                draggable="false" />
+            <img class="image" data-src="imagini/ovi2.webp" data-pers="ovi" data-text="Pătrașcu Ovidiu-Andrei"
+                src="imagini/ovi.webp" data-unmin="imagini/ovi.webp" draggable="false" />
+            <img class="image" data-src="imagini/david2.webp" data-pers="david" data-text="Petreuș David-Mihai"
+                src="imagini/david.webp" data-unmin="imagini/david.webp" draggable="false" />
+            <img class="image" data-src="imagini/andra2.webp" data-pers="andra" data-text="Pîrvănescu Andra-Georgiana"
+                src="imagini/andra.webp" data-unmin="imagini/andra.webp" draggable="false" />
+            <img class="image" data-src="imagini/miruna2.webp" data-pers="miruna" data-text="Popeangă Ioana-Miruna"
+                src="imagini/miruna.webp" data-unmin="imagini/miruna.webp" draggable="false" />
+            <img class="image" data-src="imagini/bianca2.webp" data-pers="bianca" data-text="Puținelu Bianca-Andreea"
+                src="imagini/bianca.webp" data-unmin="imagini/bianca.webp" draggable="false" />
+            <img class="image" data-src="imagini/delora2.webp" data-pers="delora" data-text="Stăncioiu Delora"
+                src="imagini/delora.webp" data-unmin="imagini/delora.webp" draggable="false" />
+            <img class="image" data-src="imagini/radu2.webp" data-pers="radu" data-text="Tăerel Radu Nicolae"
+                src="imagini/radu.webp" data-unmin="imagini/radu.webp" draggable="false" />
+            <img class="image" data-src="imagini/utzu2.webp" data-pers="utzu" data-text="Tudorescu Ioan-Daniel"
+                src="imagini/utzu.webp" data-unmin="imagini/utzu.webp" draggable="false" />
+            <img class="image" data-src="imagini/ariana2.webp" data-pers="ariana" data-text="Udroiu Ariana-Elena"
+                src="imagini/ariana.webp" data-unmin="imagini/ariana.webp" draggable="false" />
+            <img class="image" data-src="imagini/theo2.webp" data-pers="theo" data-text="Vulpe Theodor"
+                src="imagini/theo.webp" data-unmin="imagini/theo.webp" draggable="false" />
+            <img class="image" data-src="imagini/bogdan2.webp" data-pers="bogdan" data-text="Zamfiroiu Bogdan-Marian"
+                src="imagini/bogdan.webp" data-unmin="imagini/bogdan.webp" draggable="false" />
+        </div>
+        <div id="informatiiElevi">
+            <span id="achim" data-p1="Salut! Pentru mine perioada liceului înseamnă adolescenţă, schimbări, studiu şi distracţie. La început eram speriat când auzeam ca o să încep liceul: ideea de a schimba colectivul, de a ieși din zona mea de confort și de a mă adapta unui nou mediu, total diferit de cel al anilor de gimnaziu mă emoționa. 
+                
+                Impresia mea a fost greșită, doarece m-am integrat foarte repede în noua clasă." data-p2="Am avut parte de cele mai frumoase momente: am simțit stresul dinaintea unui test, am râs cu hohote pe holurile școlii și am găsit un domeniu în care mi-ar plăcea să mă implic mai mult în viitor, robotica. 
+                
+                Pentru mine, liceul a fost o întreagă aventură, care mi-a oferit cele mai frumoase amintiri."
+                data-citat="Do not compare yourself to others. If you do so, you are insulting yourself"
+                data-src="https://open.spotify.com/embed/track/2l0V6N0BiWcUCamv06eM2j?utm_source=generator&theme=0"></span>
+            <span id="arjoca"
+                data-p1="Anii de liceu au fost ca un vârtej captivant de emoții, experiențe și descoperiri. Prinși între presiunile academice și explorarea identității mele, am experimentat o gamă largă de emoții.
+                
+                În timp ce am traversat această perioadă tumultoasă, m-am modelat într-un mod profund prin tot ceea ce am trăit. În paralel cu eforturile scolare, anii de liceu m-au pus în fața unor oportunități de dezvoltare personală și socială."
+                data-p2="Partciparea în proiectul AMBASADORI JUNIORI-COLEGIUL NAȚIONAL TUDOR VLADIMIRESCU mi-a deschis călatoria spre noi orizonturi, spre maturitate. Am învățat să navighez prin dinamica socială a oamenilor, să înțeleg importanța empatiei și să îmi descopăr propria voce într-o lume plină de opinii. 
+                
+                Acest aspect al ultimilor 4 ani m-au făcut să aleg Facultatea de Drept din cadrul Universității București. Anii de liceu au fost mai mult decât un simplu capitol din viața mea - au fost fundația pe care mi-am construit viitorul."
+                data-citat="Silentium est aureum."
+                data-src="https://open.spotify.com/embed/track/7nzsY8vlnKdvGOEE0rjAXZ?utm_source=generator&theme=0"></span>
+            <span id="carina"
+                data-p1="Cu toate că liceul pare un timp al incertitudinilor, al maturizării, al încercărilor de a te descoperi, al suferințelor care pare că nu-și găsesc niciunde rezolvarea, nu e vorba numai despre acestea. Fiindcă e și perioada pasiunilor găsite cu ușurință. 
+                
+                Despre mine pot spune ca mi-am descoperit multe preocupări de-a lungul acestor 4 ani, toate în domenii diferite. Pornisem inițial pe drumul spre medicină, fiind pasionată de biologie si chimie încă din perioada gimnaziului."
+                data-p2=" Destinul m-a dus către faculatatea de arhitectură din Timișoara unde sper ca imi voi atinge la maxim potențialul. Prin această pasiune am inființat alături de doi profesori primul concurs de arhitectură pentru liceeni gorjeni ,,Arhis”. 
+                
+                Consider că liceul este o perioadă perfectă în ceea ce privește descoperirea unei pasiuni, o perioadă în care timpul încă îți este blând, deși o ia la goană în mod alert."
+                data-citat="Cand lupii tace s-aude javrele"
+                data-src="https://open.spotify.com/embed/track/608WU7FgGPw9AcfKQlUbch?utm_source=generator"></span>
+            <span id="flavius"
+                data-p1="Anii de liceu sunt un rollercoaster de emoții, experiențe și etape importante. Consider ca acesti ani sunt cei in care ne formam baza pe care, de-a lungul vietii, mai adaugam cate o caramida. 
+                
+                In timp ce anii au trecut, am realizat ca un factor foarte important in viata noastra de liceeni sunt profesorii care ne inspira sa ne urmarim pasiunile."
+                data-p2="Pentru mine, doamna profesoara de matematica, domnul profesor de informatica si doamna diriginta au avut o influenta majora in alegerea mea de a urma domeniul IT-ului si al tehnologiei pe viitor, iar pentru asta le multumesc. 
+                
+                Sunt recunoscator  pentru experientele  pe care le-am trait, lecțiile pe care le-am învățat și prieteniile pe care le-am creat."
+                data-citat="Viața e un puzzle în care cele mai multe dintre piese lipsesc."
+                data-src="https://open.spotify.com/embed/track/6kuudUd50kADw1HmSGoT6X?utm_source=generator&theme=0"></span>
+            <span id="theo"
+                data-p1="Nu cred că pot spune ceva concret despre mine; anii de liceu m-au schimbat în permanență. Totuși, un lucru e sigur. Mereu mi-am dorit să avem un colectiv frumos și unit și vreau să cred că prezența mea a avut o contribuție cât de mică la formarea acestuia. 
+                
+                Au fost patru ani deosebiți - cu bune și cu rele; patru ani în care am întâlnit multe persoane minunate, de la care am avut de învățat și alături de care m-am maturizat. Când vine vorba de amintiri, sunt nenumărate momentele care încă îmi dau fiori când îmi trec prin gând."
+                data-p2="Nu mi-aș fi imaginat anii de liceu atât de plini de emoție. Îmi voi aduce aminte mereu cu drag de plimbările seară de seară din clasa a IX-a, experiențele și trăirile cu echipa de robotica din clasa a X-a, primele majorate din clasa a XI-a și eforturile din clasa terminală. 
+                
+                Nu pot spune că îmi pare rău că am ajuns la final; a venit momentul ca această etapă să se termine și noi toți să ne urmăm traseul format. Chiar dacă sunt cuprins de nostalgie, privesc cu entuziasm înainte."
+                data-citat="Ce ție nu-ți place altuia nu-i face"
+                data-src="https://open.spotify.com/embed/track/0gBfLS4aqbrr1ZvVv8dqWB?utm_source=generator&theme=0"></span>
+            <span id="bogdan"
+                data-p1="Privind în spate, liceul mi-a oferit 4 ani de amintiri plăcute, amintiri care-mi vor rămâne aproape de-a lungul vietii.In momentul în care am pășit pe ușă în prima zi, am fost întâmpinat de un mediu plin de viață, plin de entuziasm și anticipare.
+                
+                Sala de clasă nu a devenit doar locul in care am dobândit cunoștințe, dar si locul unde am impartit cele mai multe rasete, cei mai multi nervi si cel mai mare stres spre finalul clasei a XII-a. In acea tensiune mai incercam sa destind atmosfera printr-o gluma cu colegii de banca. În afara sălii de clasă, experiența liceului a fost la fel de îmbucurătoare."
+                data-p2="De la mers cu cortul in mijlocul verii pana la oportunitatea de a participa la Campionatul National de Robotica din America, toate aceste momente consider ca au fost definitorii in evolutia mea si ca ma vor ajuta in viitorul meu la Facultatea de Matematica si Informatica din cadrul Universitatii Bucuresti. Pot doar spera ca și anii de facultate să fie speciali, desigur, în felul lor propriu. Rămas bun, ani de liceu! Când reflectăm la anii de liceu, suntem plini de recunoștință pentru amintirile pe care le-am creat, lecțiile pe care le-am învățat și prieteniile pe care le-am creat. Deși căile noastre se pot despărți pe măsură ce ne îmbarcăm în noi aventuri, spiritul de camaraderie și lecțiile învățate între acești pereți vor face parte pentru totdeauna din ceea ce suntem. Anii de liceu au fost mai mult decât un simplu capitol din viața noastră - au fost fundația pe care ne-am construit viitorul.”"
+                data-citat="I'm just here for good times, man. I want people to have the best time ever. Especially if they're around me."
+                data-autor="- Jacques Bermon Webster II"
+                data-src="https://open.spotify.com/embed/track/6scpNkWEmUxmKY7nYjVLsX?utm_source=generator&theme=0"></span>
+            <span id="daria"
+                data-p1="Sunt o fire veselă, mai tot timpul cu zâmbetul pe buze; ce-ar fi o zi fără puțină jovialitate? Anii de liceu, pe care îi credeam nesfârșiți la începutul clasei a IX-a, au trecut repede pentru că timpul zboară atunci când te simți bine. 
+                
+                Experiența liceului a fost un vârtej de petreceri, plimbări și nenumărate momente memorabile împărtășite cu colegi de clasă minunați, care ulterior, mi-au devenit a doua familie."
+                data-p2="Alaturi de unii dintre ei am trait una dintre cele mai frumoase experiente din viata mea, implicarea si dezvoltarea in echipa de robotica a liceului. Am invatat ce inseamna a fi un colectiv unit, sa lucram in echipa si sa ne sustinem reciproc atunci cand avem nevoie. 
+                
+                Îmi voi aminti mereu cu drag de această perioadă și sper ca drumurile să se intersecteze din când în când pentru a retrăi câteva clipe din farmecul liceului!"
+                data-citat="Fă din viață o artă și fii muza din ea."
+                data-src="https://open.spotify.com/embed/track/6xy2uabqs31B8WawMiZnf7?utm_source=generator&theme=0"></span>
+            <span id="ariana" data-p1="Hei! dacă ați ajuns să citiți asta înseamnă că am reușit să îmi beau cafeaua pentru a începe ziua. ce să spun? țineți minte vorba asta: O ABSENȚĂ SE MOTIVEAZĂ DAR CAFELUTSA SE SAVUREAZĂ. 
+                
+                Majoritatea îmi spun “blonda”, când e vorba de distractie si voie buna sunt prezenta."
+                data-p2="Cu anumite materii nu m am împăcat tot liceul, la biologie am scăpat cum am scăpat, media 4.5 dar nu mai contează asta important e ca e de trecere, de istorie nu mai spun… dumnezeu cu mila, la chimie in schimb daca era sa jucăm poker aveam careu de 5. Cu facultatea nu va faceți griji, ceva backup ASE, dar cine știe… dacă e să fie bine poate ne vedem prin avion și vă întreb “Doriți ceva de băut?”. În rest dacă ploua nu mă ploua, daca ninge nu mă ninge. O zi de vis va doresc kiss love"
+                data-citat="Zâmbește, Ari te iubește"
+                data-src="https://open.spotify.com/embed/track/6hScg8gWUWo26CMq51Payc?utm_source=generator&theme=0"></span>
+            <span id="david"
+                data-p1="Întotdeauna mă întrebam cum va fi viața de liceu, iar acum mă aflu în fața unei noi întrebări: cum va fi viața de student? Parcursul meu prin acești ani m-a învățat că timpul trece cu o viteză uluitoare, iar acum, când mă aflu în pragul acestei transformări, simt amestecul de nerăbdare și emoție.
+                
+                De-a lungul anilor de liceu, am realizat că viața este o călătorie plină de surprize și schimbări constante."
+                data-p2="Am crescut, am învățat și am evoluat, iar acum sunt pregătit să fac pasul către următoarea etapă a vieții mele: Universitatea Politehnică din București. Cu toate că nu știu exact ce mă așteaptă în această nouă aventură, sper că voi întâlni persoane minunate și că voi avea experiențe la fel de plăcute ca cele din perioada de liceu.
+                
+                Fiecare nouă început aduce cu sine oportunitatea de a cunoaște oameni noi, de a explora noi domenii și de a mă descoperi pe mine însumi într-un mod mai profund."
+                data-src="https://open.spotify.com/embed/track/2gZUPNdnz5Y45eiGxpHGSc?utm_source=generator&theme=0"
+                data-citat="I don't know what it is with females
+                
+                But I'm not too good at that shit"></span>
+            <span id="radu"
+                data-p1="Liceul mi-a oferit ocazia de a-mi face noi prieteni extraordinari și de a trăi multe experiențe interesante.
+                
+                Desigur că cele mai amuzante amintiri provin tocmai din faptul că noi nu am fost o promoție normală: 2 ani de lecții online, în care orele le făceam pe discord, și, între timp, patru profesori diriginți și mulți alți profesori schimbați. Consider că toate aceste lucruri ne-au facut să fim mai apropiați ca și colegi, chiar dacă poate la început au reprezentat mici impedimente."
+                data-p2="Din păcate, acum ca am ajuns în clasa a XII-a tot ce putem face este să rememorăm cu nostalgie toate evenimentele petrecute în timpul liceului, ori sa încercăm să le înlocuim cu aventuri și mai interesante, nelăsând aceste prietenii să se degradeze.
+                
+                Încă nu am decis ce facultate aș vrea să urmez, dar oscilez între medicină și politehnică București."
+                data-citat="Nu-ți dori să fie mai ușor. Dorește-ți să fi mai bun." data-autor="- Jim Rohn"
+                data-src="https://open.spotify.com/embed/track/1HNkqx9Ahdgi1Ixy2xkKkL?utm_source=generator&theme=0"></span>
+            <span id="elena"
+                data-p1="Întotdeauna visam la anii de liceu. Păreau că aduc cu sine mari libertăți. Pe atunci nu ne gândeam la responsabilitățile pe care urma să le avem. Cu mult drag pot să spun că au fost cei mai frumoși ani! Au fost anii în care am început să ne maturizăm, să căutăm răspunsuri alături de profesori și prieteni la multe dintre întrebările vieții. 
+                
+                Au fost o mulțime de evenimente: prietenii noi, ridicarea notelor proaste, chiulitul în gașcă, învățatul pentru note bune și fericirea de după, simpatii , antipatii…"
+                data-p2="Pentru mine anii de liceu au trecut atât de repede încât nu am apucat să realizez că mai e puțin și curând se vor termina. 
+                
+                După această perioadă sunt mândră că pot spune că mi-am descoperit pasiunea, urmând a studia la Facultatea de Medicină și Farmacie Victor Babeș din Timișoara."
+                data-citat="Cel mai bun mod de a-ți prezice viitorul este să-l creezi." data-autor="- Abraham Lincoln"
+                data-src="https://open.spotify.com/embed/track/4vrSFebsz1Xs3QFEoooch6?utm_source=generator&theme=0"></span>
+            <span id="laura"
+                data-p1="Pentru mine, liceul a fost un carusel de emoții. Am trecut de la entuziasm la dezamăgire, de la fericire la frică, de la momente în care simțeam că nu mai pot, la momente în care reușeam să-mi găsesc, totuși, motivația de a continua. Amintirile pe care le-am adunat în toți acești 4 ani îmi vor rămane aproape și de fiecare dată când voi avea ocazia le voi împărtăși cu cel mai mare drag și sinceritate. 
+                
+                Oportunitatea de a face parte din echipa de robotică, primele momente ale maturității: obținerea permisului de conducere, prima plecare la mare cu prietenii și multe altele, sunt experiențe care m-au modelat în omul care sunt astăzi, pregătit să înfrunte viitorul."
+                data-p2="Cât despre clasa a XII-a, este o periodă stresantă în care ți se pare timpul stă pe loc, dar și că îți fuge de sub picioare. Este anul în care m-am maturizat cel mai mult, în care m-am conturat într-un viitor student al Facultății de Arhitectură Ion Mincu din București. 
+                
+                Sunt pregătită de a închide acest capitol frumos și merg înainte cu speranța că următorii ani vor fi cel puțin la fel de speciali."
+                data-citat="Welcome to the real world. It sucks. You’re gonna love it!"
+                data-src="https://open.spotify.com/embed/track/3lWEKwBNo9IbE9pdKC5NU6?utm_source=generator&theme=0"></span>
+            <span id="bobei" data-citat="O eroare se transformă în greșeală doar dacă refuzi să o corectez"
+                data-autor="- Orlando A. Battista"
+                data-src="https://open.spotify.com/embed/track/0JHQNS9BVuyT8CIlLpe94k?utm_source=generator&theme=0"
+                data-p1="Acești patru ani de liceu vor rămâne întipăriți în memoria mea pentru totdeauna. În timp ce mă pregătesc să închei această etapă, îmi dau seama că port cu mine o comoară de amintiri și învățăminte prețioase. Pot spune că nu voi simți regrete în privința sfârșitului acestei perioade. 
+                
+                Nu pentru că nu a fost o experiență valoroasă, ci pentru că simt că am exploatat fiecare oportunitate și am crescut într-un mod care mă pregătește pentru viitorul ce mă așteaptă."
+                data-p2="Sper ca următorii ani la Universitatea Politehnică din București să fie cel puțin la fel de frumoși ca ultimii 4. 
+                
+                Am avut privilegiul să trăiesc momente de bucurie și împlinire alături de prieteni și colegi de școală. Am petrecut ore întregi în sălile de clasă, lucrând împreună pentru a atinge obiective comune și pentru a ne susține reciproc în drumul nostru către excelență."></span>
+            <span id="nanescu"
+                data-p1="Perioada mea de liceu a fost caracterizată în mare parte de lejeritate, distracție și relaxare. Deși mi-au făcut plăcere mai mult vacanțele de vară, pot spune că am și câteva aminitiri frumoase din timpul orelor sau cu colegii de clasă.
+                
+                Cu toate acestea, nu pot să spun că toate orele au fost la fel de interesante sau stimulante, deoarece subiectul principal nu mă pasiona în mod special. În clasa a XII-a recunosc că am mai lipsit de la acele ore, dar măcar lipseam cu un scop bun, mă pregăteam pentru admitere."
+                data-p2="Consider că, în ciuda acestor mici provocări, am adunat destule cunoștințe și abilități pe parcursul anilor de liceu, care mă pregătesc adecvat pentru a urma studiile la Universitatea Politehnica.
+                
+                Sunt conștient că facultatea va fi o provocare mai mare și că va impune un nivel mai ridicat de dedicare și efort, dar sunt încrezător că sunt pregătit să fac față acestor provocări și să continui să învăț și să mă dezvolt în domeniul meu de interes."
+                data-citat="Via se sapă la vale și vinul se bea la răcoare."
+                data-src="https://open.spotify.com/embed/track/1tp5VRedcGHdepOJknsO8W?utm_source=generator&theme=0"></span>
+            <span id="utzu"
+                data-p1="Cel mai mult mă bucur că m-am trezit în prima zi de liceu și sper să mă trezesc și în ziua de bacalaureat. Mai în glumă, mai în serios, anii de liceu au fost neașteptat de plăcuți, ani care m-au conturat într-o oarecare măsură. 
+                
+                Cel mai important factor din ultimii 4 ani a fost că am știut să-mi îndrum pasiunile într-o direcție pe care am ales, ulterior, să o urmez la Universitatea Politehnică din București. Cât despre viața de licean, pot spune că este diferită de la persoană la persoană."
+                data-p2=" În cazul meu, a fost un echilibru între distracție și responsabilități, mai mult de distracție până a venit clasa a XII-a. Mi-a plăcut să mă bucur de anii adolescenței și cred că anii aceștia trebuie trăiți fără regrete, deoarece nu se mai întorc. 
+                
+                Simt că mi-am format prietenii strânse, relații de durată care vor continua indiferent de drumul fiecaruia. Anii de liceu au fost ca un vis, din care, acum, m-am trezit."
+                data-citat="You can't step into the future if you don't let go of your past"
+                data-src="https://open.spotify.com/embed/track/4XLCOyUIUVv595vfIsh9HQ?utm_source=generator&theme=0"></span>
+            <span id="tudor"
+                data-p1="Îmi place să cred că sunt o persoană cu vise mari și ambiții înalte. Ceea ce mă pasionează cu adevărat este lumea fascinantă a informaticii. De mic am fost captivat de computere și de puterea lor de a transforma lumea în jurul nostru. 
+                
+                Această pasiune pentru informatică m-a condus către Universitatea Politehnica din București, un loc unde pot să-mi dezvolt cunoștințele și să-mi împlinesc aspirațiile."
+                data-p2="Cu toate că de la o vârstă mică mă atragea acest domeniu, pe parcursul liceului am înțeles ce înseamnă cu adevărat această meserie și cât de dezvoltată va ajunge în viitor. Datorită îndrumării profesorilor și curiozității m-am dezvoltat în ultimii 4 ani, fiind pregătit de a absolvi și de lăsa în urmă perioada liceului. 
+                
+                Voi lua cu mine lucrurile bune si amintirile frumoase, iar din greșeli voi învăța în continuare. Au fost 4 ani frumoși care mi-au oferit amintiri, prieteni și un început al carierei mult dorite."
+                data-citat="Fii farul care luminează în întunericul incertitudinilor."
+                data-src="https://open.spotify.com/embed/track/76gcXhY3Zv6wW0BTe9nHJo?utm_source=generator&theme=0"></span>
+            <span id="miruna"
+                data-p1="Pot spune ca ultimii 4 ani au fost o perioada memorabilă, plină cu un amestec de provocări, oportunități, prietenii și descoperire de sine. Experietntele din acesti ani au reusit sa-mi modeleze alegerile viitoare si viziunea asupra vietii. 
+                
+                În aceasta perioada mi-am descoperit interesele si punctele forte (dar nu datorita școlii), ulterior luand decizia de a urma Facultatea de Arhitectura Ion Mincu din Bucuresti."
+                data-p2="Pentru mine, singurele parti frumoase ale liceului au fost relatiile de prietenie pe care am reusit sa le formez.
+                
+                Liceul mi a oferit prietenii cu care crescut, m am dezvoltat si cu care impartasesc acum amintiri de neuitat. Perioada liceului a fost minunata dar liceul in sine pot afirma ca nu mi-a placut, de aceea inchei prin a spune ca ma bucur ca s-a terminat."
+                data-citat="And I’ll call you when the party’s over."
+                data-src="https://open.spotify.com/embed/track/03teNQu8rWlFnNzF1ULXIq?utm_source=generator&theme=0"></span>
+            <span id="ovi"
+                data-citat="We buy things we dont need with money we dont have to impress people we dont like."
+                data-autor="- Brad Pitt" data-p1="Sunt Ovidiu si sunt pasionat de tenis, sala si parfumuri, unde pot să mă mândresc cu o colecție de care toți colegii mei știu. Mereu sunt sprijinul lor atunci când au nevoie de o opinie, un sfat sau de o recomandare. 
+                
+                Sportul a fost pasiunea mea de când eram mic și pot să spun că acest lucru m-a modelat ca persoana."
+                data-p2="Uitându-mă în spate la acești 4 ani de liceu pot spune că au fost printre cei mai frumoși ani din viața mea și nu pot să fiu supărat că se termină fiindcă orice început are un sfârsit. În această perioadă am legat strânse prietenii și am învătat cate ceva de la fiecare. 
+                
+                Pot spune că mi-am format amintiri plăcute alături de cei care au fost în jurul meu și sunt sigur că pe viitor o să ne mai întalnim. Dar orice sfârșit are și o continuare...Urmează să-mi mențin drumul în direcția pe care am ales-o în clasa a XII-a, Politehnică Timișoara."
+                data-src="https://open.spotify.com/embed/track/2fhOljbX79loRcdl47SFye?utm_source=generator&theme=0"></span>
+            <span id="patrascoiu"
+                data-p1="Perioada liceului poate fi una dintre cele mai formative și pline de provocări din viață. Pentru mulți, este o perioadă în care începi să te descoperi pe tine însuți, să-ți explorezi interesele și să îți conturezi viitoarea direcție în carieră. 
+                
+                În ceea ce privește experiența mea în liceu, a fost o călătorie plină de momente atât de incitante, cât și de dificile. Cu toate că m-am transferat la CNTV la începutul clasei a 11-a, m-am integrat ca și cum am petrecut primii ani ai liceului tot aici."
+                data-p2="Toții colegii au fost cu intenții bune și din aceste prietenii formate sunt convins ca unele dintre ele vor fi de durată. 
+                
+                Perioada liceului a fost una plină de învățăminte și experiențe valoroase, iar decizia de a urma studiile la Politehnica București a fost rezultatul pasiunii mele pentru tehnologie și pentru dorința de a-mi construi o carieră într-un domeniu care mă fascinează."
+                data-citat="Bani si frică n-am avut niciodată"
+                data-src="https://open.spotify.com/embed/track/2J2xuWQnbR8UNg12dDDzpf?utm_source=generator&theme=0"></span>
+            <span id="delora"
+                data-p1="Experiența mea în cei patru ani de liceu a fost o călătorie fascinantă a cunoașterii și autodescoperirii. Am simțit bucuria învățării și lumina înțelepciunii aprinzându-se în mine. Profesorii înțelepți au fost călăuzele mele, iar colegii minunați și deosebiți au fost o sursă de inspirație și sprijin autentic în această călătorie plină de învățare și creștere.
+                
+                Acești ani au fost un capitol prețios în cartea vieții mele, marcând momente memorabile și conexiuni umane valoroase, pe care le voi prețui mereu."
+                data-p2="Școala m-a îndrumat să-mi urmez pasiunea pentru biologie și m-a inspirat să aplic la Universitatea de Medicină Carol Davila din București. Această decizie a fost întărită de profesorii mei dedicați și de resursele valoroase pe care le-am avut la îndemână.
+            
+            Astăzi, sunt recunoscătoare pentru fundația solidă pe care am primit-o și pentru că am fost încurajată să urmez această cale către realizarea visului meu de a deveni medic."
+                data-citat="The goal is to be extremely pretty while being higly educated"
+                data-src="https://open.spotify.com/embed/track/7tyUOoBQGqTJWVWB0NxCix?utm_source=generator&theme=0"></span>
+            <span id="andra"
+                data-citat="I believe nothing happens by mistake. You know, the universe has a divine plan. That sounds dramatic."
+                data-p1="De când eram mică, așteptam cu nerăbdare perioada liceului, visând că va fi ca în filme, plină de dramă, petreceri și distracție. Dar primul an a fost marcat de pandemie, orele desfășurându-se online aproape tot anul. Nu am putut lega prietenii între noi la fel de ușor, dar chiar și așa, am reușit să formăm legături puternice. Clasa a zecea a trecut aproape neobservată, dar în clasa a unsprezecea am început să realizăm că ne maturizăm, iar majoratele au început să apară. Am avut parte de distracție la fiecare majorat, iar mulți dintre noi și-au obținut permisul de conducere (eu nu, a trebuit să mă lupt mai mult pentru asta :))))."
+                data-p2="Chiar dacă nu aveam permis, ieșeam cu mașinile și ne plimbam, eu stând mereu în dreapta.În ultimii doi ani de liceu, am înțeles că nu era necesară prezența la fiecare oră, iar cafeaua era mult mai gustoasă când chiuleam. Dar la orele care erau necesare pentru viitorul meu ca și candidat la Faculatatea de Matematică și Informatică din cadrul Universității București, mă prezentam. Acești ani minunați, cu bune și rele, nu îi voi uita niciodată.
+                
+                Chiar dacă viața este plină de schimbări și noi începuturi, nu sunt sigură că sunt pregătită să trec la următorul capitol, să încep o nouă viață departe de familie. Chiar dacă viața este plină de schimbări și noi începuturi, nu sunt sigură că sunt pregătită să trec la următorul capitol, să încep o nouă viață departe de familie."
+                data-autor="- Elizabeth Woolridge Grant"
+                data-src="https://open.spotify.com/embed/track/761QvVHTibYjEi2r6A4g4Q?utm_source=generator&theme=0"></span>
+            <span id="bala"
+                data-src="https://open.spotify.com/embed/track/79CpyuSnLZYUuWGsz61aXW?utm_source=generator&theme=0"
+                data-citat="Viata asta e grea, dar e mai grea daca esti prost"
+                data-p1="Pentru mine liceul a fost lejer, am pacalit 4 ani într-un mod elegant și respectuos.
+                
+                Printre cele mai memorabile aspecte ale liceului se numără prieteniile pe care le-am format. Aceste legături puternice și de lungă durată au fost stâlpul experienței mele liceale și au adus bucurie și sprijin în momentele dificile. Întâlnirea cu diverse provocări, fie ele academice sau sociale, m-au pus la încercare și m-au determinat să cresc în moduri pe care nu le-aș fi anticipat."
+                data-p2="Cel mai horror lucru din liceu : chimia.
+
+            Însă cred că doamna profesoară o să-și amintească cu drag de mine și de colegii mei din ultimele bănci. Aduceam câte un strop de haz la fiecare oră.
+
+            Cel mai misto lucru din liceu : vacanta.
+
+            Pot spune că vacanțele de vară au menținut ultimii 4 ani plini de distracție și energie prin fiecare majorat, fiecare grătar și fiecare plecare la Costinești.
+
+            In concluzie , scoala e importanta, dar bicepsul si pieptul sunt mai importante. Așa că, hai să facem o vizită la sală, puisori!"></span>
+            <span id="davitoiu"
+                data-p1="Admir complexitatea umană, iar acest interes m-a condus către o decizie importantă: să urmez calea către Facultatea de Medicină din București, cu scopul de a-mi extinde cunoștințele și înțelegerea în acest domeniu vital. 
+                
+                Încrederea mea în creativitate, capacitatea de adaptare la orice situație și abilitatea de a analiza diverse perspective sunt pilonii care susțin pașii mei în această călătorie educativă și profesională. Mă definesc prin calmitatea mea, prin liniștea care îmi stăpânește ființa și prin ambiția ce mă îndeamnă mereu să aspir la mai mult."
+                data-p2="Anii petrecuți în liceu au fost o perioadă crucială în viața mea, oferindu-mi oportunitatea de a mă descoperi în profunzime, de a învăța din greșelile făcute și de a înțelege importanța timpului petrecut alături de cei dragi. Însă, în ciuda tuturor învățămintelor și realizărilor, simt o umbră de regret privind trecerea rapidă a anilor de liceu, în care am avut privilegiul să împărtășesc momente memorabile cu prietenii mei apropiați. 
+                
+                Aș fi dorit să fi fost mai conștientă de fiecare clipă, să fi creat mai multe amintiri de neuitat și să fi valorificat mai bine timpul petrecut alături de acești oameni speciali."
+                data-src="https://open.spotify.com/embed/track/5HuBayYfNcPP7dqTzPXai6?utm_source=generator&theme=0"
+                data-citat="Cand lupii tace s-aude javrele"></span>
+            <span id="bianca"
+                data-p1="Sunt o persoană cu o inimă prietenoasă și cu ochii îndreptați spre orizonturi noi și îndrăznețe.  Îmi place să citesc, să călătoresc și să descopăr lucruri noi. Anii petrecuți în liceu au fost o perioadă de transformare și de creștere personală. 
+                
+                În acel mediu efervescent, am avut privilegiul de a întâlni oameni noi, de a explora perspective diferite și de a construi relații care au devenit pietre de temelie în formarea mea. Fiecare zi a fost o aventură, iar fiecare experiență a lăsat în sufletul meu o amprentă adâncă. Această perioadă a fost definitorie pentru drumul meu viitor."
+                data-p2="În mijlocul diversității și a schimbărilor, mi-am descoperit pasiunile și am înțeles că viitorul meu este strâns legat de studiul complexității corpului uman. Astfel, a luat naștere hotărârea mea de a urma calea către Facultatea de Medicină din București. 
+                
+                Fascinația pentru funcționarea organismului uman mă inspiră și mă motivează să explorez și să înțeleg în profunzime misterele vieții și să împărtășesc cunoștințele mele pentru a aduce beneficii societății."
+                data-citat="Viitorul le aparține celor care cred în frumusețea visurilor lor."
+                data-autor="- Eleanor Roosevelt"
+                data-src="https://open.spotify.com/embed/track/3AJwUDP919kvQ9QcozQPxg?utm_source=generator&theme=0"></span>
+            <span id="nicu" data-citat="I had to put my grades up for adoption because i couldn’t raise them" data-p1="Salut, frate! Pentru mine liceul a fost o perioadă frumoasă, cu  bune și cu rele, care m-a făcut să mă dezvolt în persoana care sunt astăzi. A fost minunat să stau în bancă cu Achim și m-am bucurat că mi-am format strânse prietenii cu ceilalți colegi. 
+            
+            În ceea ce privește activitățile școlare, am avut oportunitatea să explorez diverse domenii și interese."
+                data-p2=" Pasiunea în care m-am regăsit cel mai mult a fost informatica, urmând să studiez pentru următorii 3 ani la Universitatea Politehnică București.  Desigur, perioada liceului a fost marcată și de momente dificile și de lecții importante învățate. 
+                
+                Am învățat că eșecurile și dezamăgirile fac parte din viață și că este important să ne ridicăm și să mergem mai departe. Am învățat să prețuiesc munca și perseverența în atingerea obiectivelor mele, indiferent cât de dificilă ar părea drumul."
+                data-src="https://open.spotify.com/embed/track/7vgTNTaEz3CsBZ1N4YQalM?utm_source=generator&theme=0"></span>
+            <span id="silviana"
+                data-p1="Anii de liceu reprezinta cea mai frumoasa perioada din viata mea. Desi uneori a fost tumultoasa, aceasta experienta mi a format caracterul si m a maturizat. Dintr un copil impulsiv si aerian am ajuns o fata cu picioarele pe pamant care stie sa se argumenteze sau sa taca atunci cand este necesar. 
+                
+                Am intalnit toate tipurile de caracter si am reusit sa leg prietenii inchegate cu oameni care mi au demonstrat ca imi pot fi alaturi cu adevarat."
+                data-p2="Liceul mi a aratat faptul ca nu conteaza profilul in alegerea unei viitoare carieri. Desi am ales profilul mate-info, am ales o facultate complet opusa si anume Facultatea de medicina generala din cadrul umf timisoara.
+            
+            Inchei prin a spune ca nu as schimba nimic din acest parcurs deoarece cu siguranta fiecare moment frumos sau mai putin frumos a contribuit la sentimentul puternic de nostalgie pe care il simt in acest moment."
+                data-src="https://open.spotify.com/embed/track/5Alb26b1yQSaZtNxYKhZFC?utm_source=generator"
+                data-citat="Sometimes you will never know the value of a moment until it becomes a memory"></span>
+            <span id="roxana"
+                data-p1="Pentru mine, anii de liceu au însemnat o perioadă de autodescoperire și de formare a identității. Au fost ani în care am explorat diferite pasiuni și interese, am învățat să lucrez în echipă și să gestionez timpul eficient. 
+                
+                Această perioadă m-a pregătit pentru următorul pas în viața mea și m-a ajutat să înțeleg direcția în care vreau să îmi construiesc viitorul."
+                data-p2="În acești ani mi-am descoperit cu adevărat pasiunea pentru IT, fascinată de lumea digitală încă de când eram mică. 
+                
+                Vreau să dau la Universitatea Națională de Știința și Tehnologie Politehnica București pentru că îmi doresc să-mi transform pasiunea într-o carieră concretă și să contribui la inovație."
+                data-citat="Imperfecţiunea este frumoasă, nebunia este geniu şi este mai bine să fii absolut ridicol decât absolut plictisitor."
+                data-autor="- Marilyn Monroe"
+                data-src="https://open.spotify.com/embed/track/6lFUdRItQEsEuD7dSINL47?utm_source=generator&theme=0"></span>
+            <span id="tirca"
+                data-p1="Pot începe prin a spune că ultimii doi ani au fost cei plini ani din cariera mea de profesor. Plini de entuziasm, stres, emoție, fericire, și, de fiecare dată, câte ceva nou. Deși vă cunosc de la începutul acestei aventuri, abia acum doi ani mi s-a oferit ocazia de a mă implica mult  mai mult în viețile voastre, în evoluția academică și în experiența fiecăruia de licean.
+            
+            Am preluat materialul la care ceilalți diriginți au lucrat cu drag și l-am adus într-o formă demnă de a părăsi porțile liceului."
+                data-p2="Am încercat să fiu un om înțelegător, atent,  calm, prietenos.. V-am urmărit evoluția și am apreciat fiecare pas făcut în dezvoltarea voastră.
+            
+            A fost o onoare să vă fiu dirigintă și sper că la viitoarele reuniuni să fim tot la fel cum am fost până acum, uniți."
+                data-citat="Diriginta clasei XII A"></span>
+        </div>
+        <img id="clone-image">
+        <img src="imagini/x.png" id="close-modal">
+        <p id="maimulte">Despre</p>
+        <p id="numePersoana"></p>
+        <div id="despreElev">
+            <img id="iesireSectiune" src="imagini/leftarrow.png">
+            <h1 id="titluElev">Bala Mihai</h1>
+            <div class="flex" id="flexelevi" style="margin-top: 5%;">
+
+                <div id="elevscris">
+                    <p id="p1">
+                        Nu cred că pot spune ceva concret despre mine; anii de liceu m-au schimbat în permanență.
+                        Totuși, un lucru e sigur. Mereu mi-am dorit să avem un colectiv frumos și unit și vreau să cred
+                        că prezența mea a avut o contribuție cât de mică la formarea acestuia. Au fost patru ani
+                        deosebiți - cu bune și cu rele; patru ani în care am întâlnit multe persoane minunate, de la
+                        care am avut de învățat și alături de care m-am maturizat.
+                    </p>
+                </div>
+                <div id="elevpoza">
+                    <img id="pozaelev" src="imagini/bala.webp">
+                </div>
+            </div>
+            <div class="flex" id="flexelevi" style="margin-top: 5%;">
+                <div id="elevpoza">
+                    <img id="pozaelev2" src="imagini/bala.webp">
+                </div>
+                <div id="elevscris">
+                    <p id="p2">
+                        Când vine vorba de amintiri, sunt nenumărate momentele care încă îmi dau fiori când îmi trec
+                        prin gând. Nu mi-aș fi imaginat anii de liceu atât de plini de emoție. Îmi voi aduce aminte
+                        mereu cu drag de plimbările seară de seară din clasa a IX-a, experiențele și trăirile cu echipa
+                        de robotica din clasa a X-a, primele majorate din clasa a XI-a și eforturile din clasa
+                        terminală. Nu pot spune că îmi pare rău că am ajuns la final; a venit momentul ca această etapă
+                        să se termine și noi toți să ne urmăm traseul format.
+                    </p>
+                </div>
+            </div>
+            <iframe style="border-radius:12px" id="melodiePref"
+                src="https://open.spotify.com/embed/track/0zMS7Z2j0Z8gyuEHQYpYcC?utm_source=generator&theme=0"
+                width="50%" height="152" frameBorder="0" allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"></iframe>
+            <p id="citat">~ "Lorem Ipsum"</p>
+            <p id="despreJos">XII-A</p>
+        </div>
+        <div id="numarjos">
+            <span id="numarimagine">
+            </span>
+            <p>-</p>
+            <p id="nrtotal">1</p>
+        </div>
+    </div>
+    <div id="despre">
+        <div id="clasaImg" class="flex">
+        </div>
+        <div class="flex" id="container" style="padding-top: 6vh;">
+
+            <div id="item-1">
+                <div id="TextBox">
+                    <p>Noi suntem clasa XII-a A, clasă de profil real, iar pentru ultimii 4 ani,
+                        Colegiul Național Tudor Vladimirescu ne-a fost o a doua casă, locul unde
+                        a început aventura numită ADOLESCENȚĂ. E incredibil cât de repede trece timpul şi
+                        cum, dintr-o singură clipire, acesta schimbă „în oameni mari, nişte copii”. Am crescut,
+                        ne-am maturizat împreună, indifent de cât de diferite au ajuns, într-un final, destinele
+                        noastre să fie.</p>
+                    <p>Cu toate că am fost una dintre generațiile afectate de pandemie,
+                        acest fapt nu s-a împotrivit asupra prieteniilor create, momentelor împărtășite și
+                        unei vieți normale de licean. Acum că în curând va suna ultimul clopoțel,
+                        suntem mândri și recunoscători unii pentru alții, pentru profesorii și
+                        diriginții care ne-au inspirat în fiecare an și pentru mediul în care
+                        am evoluat și care ne-a pregătit pentru următoarele etape ale vieții noastre.</p>
+                </div>
+            </div>
+            <div id="item-2">
+
+                <img id="imgclasa" src="imagini/pozaInceput.webp">
+            </div>
+        </div>
+        <h1 id="textdiriginti">Diriginții clasei</h1>
+        <div id="diriginti">
+            <div class="flex diriginti">
+                <div class="diriginte">
+                    <img class="flexitem" src="imagini/tirca.webp">
+                    <p>Tîrcă Mihaela</p>
+                    <p class="textmic">2022-2024</p>
+                </div>
+                <div class="diriginte">
+                    <img class="flexitem" src="imagini/barbiera.webp">
+                    <p>Cornelia Bărbieru</p>
+                    <p class="textmic">2021-2022</p>
+                </div>
+                <div class="diriginte">
+                    <img class="flexitem" src="imagini/nodea.webp">
+                    <p>Gheorge Eugen Nodea</p>
+                    <p class="textmic">2020-2021</p>
+                </div>
+
+            </div>
+        </div>
+        <h1 id="textGalerie">Galerie</h1>
+        <div class="flex" id="galerie">
+            <div class="column">
+                <div class="item">
+                    <a href="imagini/1.webp" data-lightbox="galerie">
+                        <img class="row-1" src="imagini/1.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/2.webp" data-lightbox="galerie">
+                        <img class="row-2" src="imagini/2.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/3.webp" data-lightbox="galerie">
+                        <img class="row-3" src="imagini/3.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/12.webp" data-lightbox="galerie">
+                        <img class="row-4" src="imagini/12.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/14.webp" data-lightbox="galerie">
+                        <img class="row-5" src="imagini/14.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/15.webp" data-lightbox="galerie">
+                        <img class="row-6" src="imagini/15.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/19.webp" data-lightbox="galerie">
+                        <img class="row-7" src="imagini/19.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/29.webp" data-lightbox="galerie">
+                        <img class="row-8" src="imagini/29.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/33.webp" data-lightbox="galerie">
+                        <img class="row-9" src="imagini/33.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/37.webp" data-lightbox="galerie">
+                        <img class="row-10" src="imagini/37.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/41.webp" data-lightbox="galerie">
+                        <img class="row-11" src="imagini/41.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/45.webp" data-lightbox="galerie">
+                        <img class="row-12" src="imagini/45.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/49.webp" data-lightbox="galerie">
+                        <img class="row-13" src="imagini/49.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/53.webp" data-lightbox="galerie">
+                        <img class="row-14" src="imagini/53.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/XIIA.webp" data-lightbox="galerie">
+                        <img class="row-15" src="imagini/XIIA.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/58.webp" data-lightbox="galerie">
+                        <img class="row-16" src="imagini/58.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/62.webp" data-lightbox="galerie">
+                        <img class="row-17" src="imagini/62.webp">
+                    </a>
+                </div>
+                
+                <div class="item">
+                    <a href="imagini/65.webp" data-lightbox="galerie">
+                        <img class="row-18" src="imagini/65.webp">
+                    </a>
+                </div>
+            </div>
+            <div class="column">
+                <div class="item">
+                    <a href="imagini/4.webp" data-lightbox="galerie">
+                        <img class="row-1" src="imagini/4.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/6.webp" data-lightbox="galerie">
+                        <img class="row-2" src="imagini/6.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/7.webp" data-lightbox="galerie">
+                        <img class="row-3" src="imagini/7.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/20.webp" data-lightbox="galerie">
+                        <img class="row-4" src="imagini/20.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/21.webp" data-lightbox="galerie">
+                        <img class="row-5" src="imagini/21.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/16.webp" data-lightbox="galerie">
+                        <img class="row-6" src="imagini/16.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/28.webp" data-lightbox="galerie">
+                        <img class="row-7" src="imagini/28.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/30.webp" data-lightbox="galerie">
+                        <img class="row-8" src="imagini/30.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/34.webp" data-lightbox="galerie">
+                        <img class="row-9" src="imagini/34.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/38.webp" data-lightbox="galerie">
+                        <img class="row-10" src="imagini/38.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/42.webp" data-lightbox="galerie">
+                        <img class="row-11" src="imagini/42.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/46.webp" data-lightbox="galerie">
+                        <img class="row-12" src="imagini/46.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/50.webp" data-lightbox="galerie">
+                        <img class="row-13" src="imagini/50.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/54.webp" data-lightbox="galerie">
+                        <img class="row-14" src="imagini/54.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/55.webp" data-lightbox="galerie">
+                        <img class="row-15" src="imagini/55.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/59.webp" data-lightbox="galerie">
+                        <img class="row-16" src="imagini/59.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/63.webp" data-lightbox="galerie">
+                        <img class="row-17" src="imagini/63.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/67.webp" data-lightbox="galerie">
+                        <img class="row-18" src="imagini/67.webp">
+                    </a>
+                </div>
+            </div>
+            <div class="column">
+                <div class="item">
+                    <a href="imagini/5.webp" data-lightbox="galerie">
+                        <img class="row-1" src="imagini/5.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/10.webp" data-lightbox="galerie">
+                        <img class="row-2" src="imagini/10.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/11.webp" data-lightbox="galerie">
+                        <img class="row-3" src="imagini/11.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/24.webp" data-lightbox="galerie">
+                        <img class="row-4" src="imagini/24.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/23.webp" data-lightbox="galerie">
+                        <img class="row-5" src="imagini/23.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/17.webp" data-lightbox="galerie">
+                        <img class="row-6" src="imagini/17.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/22.webp" data-lightbox="galerie">
+                        <img class="row-7" src="imagini/22.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/31.webp" data-lightbox="galerie">
+                        <img class="row-8" src="imagini/31.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/35.webp" data-lightbox="galerie">
+                        <img class="row-9" src="imagini/35.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/39.webp" data-lightbox="galerie">
+                        <img class="row-10" src="imagini/39.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/43.webp" data-lightbox="galerie">
+                        <img class="row-11" src="imagini/43.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/47.webp" data-lightbox="galerie">
+                        <img class="row-12" src="imagini/47.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/51.webp" data-lightbox="galerie">
+                        <img class="row-13" src="imagini/51.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/56.webp" data-lightbox="galerie">
+                        <img class="row-15" src="imagini/56.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/60.webp" data-lightbox="galerie">
+                        <img class="row-16" src="imagini/60.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/64.webp" data-lightbox="galerie">
+                        <img class="row-17" src="imagini/64.webp">
+                    </a>
+                </div>
+            </div>
+            <div class="column">
+                <div class="item">
+                    <a href="imagini/8.webp" data-lightbox="galerie">
+                        <img class="row-1" src="imagini/8.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/9.webp" data-lightbox="galerie">
+                        <img class="row-2" src="imagini/9.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/13.webp" data-lightbox="galerie">
+                        <img class="row-3" src="imagini/13.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/26.webp" data-lightbox="galerie">
+                        <img class="row-4" src="imagini/26.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/25.webp" data-lightbox="galerie">
+                        <img class="row-5" src="imagini/25.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/18.webp" data-lightbox="galerie">
+                        <img class="row-6" src="imagini/18.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/27.webp" data-lightbox="galerie">
+                        <img class="row-7" src="imagini/27.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/32.webp" data-lightbox="galerie">
+                        <img class="row-8" src="imagini/32.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/36.webp" data-lightbox="galerie">
+                        <img class="row-9" src="imagini/36.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/40.webp" data-lightbox="galerie">
+                        <img class="row-10" src="imagini/40.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/44.webp" data-lightbox="galerie">
+                        <img class="row-11" src="imagini/44.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/48.webp" data-lightbox="galerie">
+                        <img class="row-12" src="imagini/48.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/52.webp" data-lightbox="galerie">
+                        <img class="row-13" src="imagini/52.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/57.webp" data-lightbox="galerie">
+                        <img class="row-15" src="imagini/57.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/61.webp" data-lightbox="galerie">
+                        <img class="row-16" src="imagini/61.webp">
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="imagini/66.webp" data-lightbox="galerie">
+                        <img class="row-18" src="imagini/66.webp">
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="blank"></div>
+        <div class="footer">
+            <h4>XII-A</h4>
+        </div>
+    </div>
+    <div id="contact">
+        <div id="containercontact">
+            <div class="blank2"></div>
+            <p class="textContact" style="margin-top: 0;">Clasa: XII A</p>
+            <p class="textContact titlue">Nume elevi:</p>
+            <div id="echipacontainter">
+                <div class="flex echipacontainter">
+                    <div class="membru">
+                        <img class="flexitemm" src="imagini/utzu.webp">
+                        <p class="textContact">Tudorescu Ioan Daniel</p>
+                    </div>
+                    <div class="membru">
+                        <img class="flexitemm" src="imagini/laura.webp">
+                        <p class="textContact">Dolofan Laura-Elena</p>
+                    </div>
+
+                </div>
+            </div>
+            <p class="textContact">Unitate școlară: Colegiul Național „Tudor Vladimirescu”</p>
+            <p class="textContact">Profesor îndrumător: Gheorghe-Eugen Nodea</p>
+        </div>
+    </div>
+</body>
+
+
+</html>
