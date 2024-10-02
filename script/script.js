@@ -1081,14 +1081,16 @@ $(document).ready(() => {
     //// iesire animatie intrare elevi
 
     function iesireanimatieelev() {
-        document.body.style.overflowY = "hidden"
-        document.getElementsByTagName("html")[0].style.overflow = "hidden";
+        document.getElementById('despreElev').position = "absolute";
         TweenMax.to("#despreElev", {
             x: "100%",
             duration: .8,
             ease: "power4.out",
             display: "none",
             onComplete: () => {
+                
+        document.body.style.overflowY = "hidden"
+        document.getElementsByTagName("html")[0].style.overflow = "hidden";
                 document.getElementById('iesireSectiune').removeEventListener('click', iesireanimatieelev)
                 canScroll = "true"
             }
