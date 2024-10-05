@@ -19,9 +19,13 @@ $(document).ready(() => {
     var cloneTimeline = new TimelineMax({ paused: true })
     var canHover = "false"
     var currentHoverImage;
+    var escModal = "false";
+    var escAnimatieElev = "false";
     let letters = 0
     let tween = 0
     let lastX = 27;
+    let resized = false
+    let spaceModal = false
     canSwitchText = true
     const track = document.getElementById("image-container");
     const cloneImg = document.getElementById('clone-image');
@@ -49,8 +53,12 @@ $(document).ready(() => {
             document.getElementById("elevi").style.display = "block"
             const numarImagine = document.getElementById('numarimagine')
             document.getElementById('numarjos').style.height = document.getElementById("numarimagine").children[0].offsetHeight + "px"
+            var children = Array.from(numarImagine.children)
+            children.forEach((elem) => {
+                elem.style.height = numarImagine.offsetHeight + "px"
+            })
             TweenMax.to(numarImagine, {
-                y: -numarImagine.children[28].offsetHeight * 27 - (numarImagine.children[28].offsetHeight - numarImagine.children[28].parentElement.offsetHeight) + "px",
+                y: - numarImagine.children[28].parentElement.offsetHeight * 27 + "px",
                 duration: 0,
             })
             containerContact.style.display = 'none'
@@ -132,11 +140,10 @@ $(document).ready(() => {
             cloneTimeline.reverse();
         }
     }, +0.6)
-    mySplitText = new SplitType('#TextBox', { type: "lines", position: "absolute" })
-    mySplitText.split({ type: "words,chars" })
-    gsap.set("#TextBox", { perspective: 400 });
-    var chars = mySplitText.chars;
+    
     splitTextTimeline = new TimelineMax({ paused: true });
+
+
 
     //// functie fade-in element imagini
     function FadeInAnimation(element) {
@@ -182,13 +189,15 @@ $(document).ready(() => {
         else FadeIn.reverse()
     }
     //// marire imagine tot ecranul
-
+    var ap = [];
+    var modal_cnt = 28;
     let i = 0;
     images.forEach((element) => {
         //// creare element pentru numarare
         let newElem = document.createElement('p')
         i++;
         newElem.innerText = i;
+        element.dataset.cnt = i
         let span = document.getElementById("numarimagine")
         if (newElem.innerText < 28)
             span.appendChild(newElem)
@@ -204,40 +213,139 @@ $(document).ready(() => {
         FadeInAnimation(element)
         element.addEventListener('click', () => {
             if (canHover === "true") {
+                modal_cnt = element.dataset.cnt;
+                console.log(modal_cnt)
                 track.dataset.canMove = "false";
                 track.dataset.lightBox = "true";
                 openModal(element);
             }
         })
     })
-    //// deschidere Modal
+    /// initializare splittext
+    function init_SplitText() {
+        mySplitText = new SplitType('#TextBox', { type: "lines", position: "absolute" })
+            gsap.from(mySplitText.lines, {
+                scrollTrigger: {
+                    trigger: '#TextBox',
+                    toggleActions: "play none none reverse",
+                    start: "top center"
+                },
+                onComplete: () => {
+                },
+                duration: 0.4,
+                autoAlpha: 0,
+                lazy: false,
+                rotationX: -120,
+                ease: "power4.InOut",
+                force3D: true,
+                transformOrigin: "top center -150",
+                stagger: { amount: 0.4 }
 
+            })
+    }
+    /// inchidere Modal cu ESC
+    document.onkeydown = function (evt) {
+        evt = evt || window.event;
+        if (evt.keyCode === 27) {
+            if (escModal === "true") {
+                closeModal.click()
+                escModal = "false"
+                spaceModal = false
+            }
+            else if (escAnimatieElev === "true") {
+                iesireanimatieelev()
+                escAnimatieElev = "false"
+                escModal = "true"
+            }
+            else {
+                console.log("modal not open")
+            }
+        }
+        if (evt.keyCode === 32) {
+            console.log("DA")
+            if(spaceModal === true)
+            {
+                animatieElev()
+            }
+        }
+    };
+
+    //// deschidere Modal
     function openModal(element) {
-        cloneTimelineConstructor()
-        plus.removeEventListener('click', openModalPlus)
-        var rect = element.getBoundingClientRect();
-        cloneImg.style.left = rect.left + "px";
-        cloneImg.style.top = rect.top + "px";
-        cloneImg.style.width = element.offsetWidth + "px";
-        cloneImg.style.height = element.offsetHeight + "px";
-        cloneImg.src = element.src;
-        cloneImg.dataset.text = element.dataset.text
-        cloneImg.dataset.src = element.dataset.src
-        cloneImg.dataset.pers = element.dataset.pers;
-        currentHoverImage = element;
-        if (touchSupport) {
-            TweenMax.to('#next', {
-                autoAlpha: 0,
-                duration: .5
-            })
+
+        var duration = 300;
+        if (parseInt(modal_cnt) - x === 0) duration = 150
+        else if (Math.abs(parseInt(modal_cnt) - x) < 2) duration = 250
+        else if (Math.abs(parseInt(modal_cnt) - x) < 3) duration = 350
+        else duration = 450
+        if (modal_cnt === "28") {
+            track.animate({
+                transform: `translate(-50%, -50%)`
+            }, { duration: duration, fill: "forwards" });
+            track.dataset.prevPercentage = 0
         }
-        if (touchSupport) {
-            TweenMax.to('#prev', {
-                autoAlpha: 0,
-                duration: .5
-            })
+        else if (parseInt(modal_cnt) < 28) {
+            track.dataset.prevPercentage = 49.18 / 27 * (28 - parseFloat(modal_cnt))
+            track.animate({
+                transform: `translate(${parseFloat(track.dataset.prevPercentage) - 50}%, -50%)`
+            }, { duration: duration, fill: "forwards" });
         }
-        cloneTimeline.play();
+        else {
+            track.dataset.prevPercentage = -49.18 / 27 * (parseFloat(modal_cnt) - 28)
+            track.animate({
+                transform: `translate(${parseFloat(track.dataset.prevPercentage) - 50}%, -50%)`
+            }, { duration: duration, fill: "forwards" });
+        }
+
+        x = parseInt(modal_cnt)
+        console.log(x)
+        const numarImagine = document.getElementById('numarimagine')
+        TweenMax.to(numarImagine, {
+            y: -numarImagine.children[28].offsetHeight * (x - 1) + "px",
+            duration: .3,
+            ease: "power4.InOut",
+        })
+        lastX = x;
+
+        document.body.style.pointerEvents = "none"
+        document.getElementsByTagName("html")[0].style.pointerEvents = "none";
+
+        track.dataset.percentage = track.dataset.prevPercentage
+        setTimeout(() => {
+            spaceModal = true
+            escModal = "true"
+            cloneTimelineConstructor()
+            plus.removeEventListener('click', openModalPlus)
+            var rect = element.getBoundingClientRect();
+            cloneImg.style.left = rect.left + "px";
+            cloneImg.style.top = rect.top + "px";
+            cloneImg.style.width = element.offsetWidth + "px";
+            cloneImg.style.height = element.offsetHeight + "px";
+            cloneImg.src = element.src;
+            cloneImg.dataset.text = element.dataset.text
+            cloneImg.dataset.src = element.dataset.src
+            cloneImg.dataset.pers = element.dataset.pers;
+            currentHoverImage = element;
+            if (touchSupport) {
+                TweenMax.to('#next', {
+                    autoAlpha: 0,
+                    duration: .5
+                })
+            }
+            if (touchSupport) {
+                TweenMax.to('#prev', {
+                    autoAlpha: 0,
+                    duration: .5
+                })
+            }
+            cloneTimeline.play();
+        }, duration + 100)
+        setTimeout(() => {
+
+            document.body.style.pointerEvents = "auto"
+            document.getElementsByTagName("html")[0].style.pointerEvents = "auto";
+        }, duration + 320)
+
     }
 
     //// resetare Timeline Clona
@@ -333,24 +441,7 @@ $(document).ready(() => {
         autoAlpha: 0,
     })
 
-    gsap.from(mySplitText.lines, {
-        scrollTrigger: {
-            trigger: '#TextBox',
-            toggleActions: "play none none reverse",
-            start: "top center"
-        },
-        onComplete: () => {
-        },
-        duration: 0.4,
-        autoAlpha: 0,
-        lazy: false,
-        rotationX: -120,
-        ease: "power4.InOut",
-        force3D: true,
-        transformOrigin: "top center -150",
-        stagger: { amount: 0.4 }
-
-    })
+    init_SplitText()
 
     canHoverDespre = "false"
 
@@ -445,6 +536,7 @@ $(document).ready(() => {
     elevi.addEventListener('click', () => {
         ////if (elevi.classList.contains('active') === false && canHover === "false") 
         if (elevi.classList.contains('active') === false) {
+            
             if (despre.classList.contains('active') === true) {
                 if (touchSupport) {
                     TweenMax.to('#prev', {
@@ -517,7 +609,13 @@ $(document).ready(() => {
     despre.addEventListener('click', () => {
         ////if (despre.classList.contains('active') === false && canHover === "true") 
         if (despre.classList.contains('active') === false) {
-
+            setTimeout(() =>{
+                if (resized===true) {
+                    init_SplitText()
+                    console.log("resizeDA")
+                    resize = false
+                }
+            },1500)
             if (elevi.classList.contains('active') === true) {
                 console.log("DA")
                 TweenMax.to('#numePersoana', {
@@ -529,8 +627,8 @@ $(document).ready(() => {
                 despre.classList.add('active');
                 elevi.classList.remove('active');
                 iesireanimatieelev()
-                document.body.style.removeProperty('overflow-y')
-                document.getElementsByTagName("html")[0].style.removeProperty('overflow-y')
+                document.body.style.removeProperty('overflow')
+                document.getElementsByTagName("html")[0].style.removeProperty('overflow')
 
                 t1.progress(0);
                 t1.play();
@@ -742,26 +840,15 @@ $(document).ready(() => {
         }*/
         var I = setInterval(() => {
             cautBin();
-            if (lastX < x) {
-                const numarImagine = document.getElementById('numarimagine')
-                lastX = x;
-                TweenMax.to(numarImagine, {
-                    y: -numarImagine.children[28].offsetHeight * (x - 1) - (numarImagine.children[28].offsetHeight - numarImagine.children[28].parentElement.offsetHeight) + "px",
-                    duration: .3,
-                    ease: "power4.InOut",
-                })
-                lastX = x;
-            }
-            else if (lastX > x) {
-                const numarImagine = document.getElementById('numarimagine')
-                TweenMax.to(numarImagine, {
-                    y: -numarImagine.children[28].offsetHeight * (x - 1) - (numarImagine.children[28].offsetHeight - numarImagine.children[28].parentElement.offsetHeight) + numarImagine.children[28].offsetHeight * (lastX - x - 1) + "px",
-                    duration: .3,
-                    ease: "power4.InOut",
-                })
-                lastX = x;
-            }
-        }, 150)
+            const numarImagine = document.getElementById('numarimagine')
+            lastX = x;
+            TweenMax.to(numarImagine, {
+                y: -numarImagine.children[28].offsetHeight * (x - 1) + "px",
+                duration: .3,
+                ease: "power4.InOut",
+            })
+            lastX = x;
+        }, 300)
         /*cloneImg.animate({
             objectPosition: `${x * 50 / 28 + nextPositionPercentage}% 50%`
         }, { duration: 200, fill: "forwards" });*/
@@ -803,7 +890,6 @@ $(document).ready(() => {
         const mouseDelta = e.deltaY,
             maxDelta = track.offsetWidth * 2,
             percentage = (mouseDelta / maxDelta) * 100;
-
         let nextPercentageUnconstrained = parseFloat(track.dataset.prevPercentage) + percentage;
         if (nextPercentageUnconstrained > 70) return;
         if (nextPercentageUnconstrained < -70) return;
@@ -829,25 +915,14 @@ $(document).ready(() => {
         }*/
         var nr = 1;
         cautBin();
-        if (lastX < x) {
-            const numarImagine = document.getElementById('numarimagine')
-            lastX = x;
-            TweenMax.to(numarImagine, {
-                y: -numarImagine.children[28].offsetHeight * (x - 1) - (numarImagine.children[28].offsetHeight - numarImagine.children[28].parentElement.offsetHeight) + "px",
-                duration: .3,
-                ease: "power4.InOut",
-            })
-            lastX = x;
-        }
-        else if (lastX > x) {
-            const numarImagine = document.getElementById('numarimagine')
-            TweenMax.to(numarImagine, {
-                y: -numarImagine.children[28].offsetHeight * (x - 1) - (numarImagine.children[28].offsetHeight - numarImagine.children[28].parentElement.offsetHeight) + numarImagine.children[28].offsetHeight * (lastX - x - 1) + "px",
-                duration: .3,
-                ease: "power4.InOut",
-            })
-            lastX = x;
-        }
+        const numarImagine = document.getElementById('numarimagine')
+        lastX = x;
+        TweenMax.to(numarImagine, {
+            y: -numarImagine.children[28].offsetHeight * (x - 1) + "px",
+            duration: .3,
+            ease: "power4.InOut",
+        })
+        lastX = x;
         track.dataset.prevPercentage = track.dataset.percentage;
         ///document.getElementById('nr').innerText = x;
         /*cloneImg.animate({
@@ -855,25 +930,14 @@ $(document).ready(() => {
         }, { duration: 200, fill: "forwards" });*/
         setTimeout(() => {
             cautBin();
-            if (lastX < x) {
-                const numarImagine = document.getElementById('numarimagine')
-                lastX = x;
-                TweenMax.to(numarImagine, {
-                    y: -numarImagine.children[28].offsetHeight * (x - 1) - (numarImagine.children[28].offsetHeight - numarImagine.children[28].parentElement.offsetHeight) + "px",
-                    duration: .3,
-                    ease: "power4.InOut",
-                })
-                lastX = x;
-            }
-            else if (lastX > x) {
-                const numarImagine = document.getElementById('numarimagine')
-                TweenMax.to(numarImagine, {
-                    y: -numarImagine.children[28].offsetHeight * (x - 1) - (numarImagine.children[28].offsetHeight - numarImagine.children[28].parentElement.offsetHeight) + numarImagine.children[28].offsetHeight * (lastX - x - 1) + "px",
-                    duration: .3,
-                    ease: "power4.InOut",
-                })
-                lastX = x;
-            }
+            const numarImagine = document.getElementById('numarimagine')
+            lastX = x;
+            TweenMax.to(numarImagine, {
+                y: -numarImagine.children[28].offsetHeight * (x - 1) + "px",
+                duration: .3,
+                ease: "power4.InOut",
+            })
+            lastX = x;
             ///document.getElementById('nr').innerText = x;
             track.dataset.prevPercentage = track.dataset.percentage;
         }, 301)
@@ -956,6 +1020,7 @@ $(document).ready(() => {
 
     //// functie inchidere modal
     const closeModal = document.getElementById('close-modal')
+
     closeModal.addEventListener('click', () => {
         TweenMax.to('#numePersoana', {
             autoAlpha: 0,
@@ -1042,7 +1107,10 @@ $(document).ready(() => {
 
     function animatieElev() {
         canScroll = "false"
-
+        escModal = "false"
+        
+        spaceModal = false
+        escAnimatieElev = "true"
         if (!touchSupport) {
             document.body.style.overflowY = "visible"
             document.getElementsByTagName("html")[0].style.overflow = "visible";
@@ -1081,6 +1149,8 @@ $(document).ready(() => {
     //// iesire animatie intrare elevi
 
     function iesireanimatieelev() {
+        
+        spaceModal = true
         document.getElementById('despreElev').position = "absolute";
         TweenMax.to("#despreElev", {
             x: "100%",
@@ -1088,9 +1158,11 @@ $(document).ready(() => {
             ease: "power4.out",
             display: "none",
             onComplete: () => {
-                
-        document.body.style.overflowY = "hidden"
-        document.getElementsByTagName("html")[0].style.overflow = "hidden";
+                if (elevi.classList.contains('active') === true) {
+
+                    document.body.style.overflowY = "hidden"
+                    document.getElementsByTagName("html")[0].style.overflow = "hidden";
+                }
                 document.getElementById('iesireSectiune').removeEventListener('click', iesireanimatieelev)
                 canScroll = "true"
             }
@@ -1131,10 +1203,10 @@ $(document).ready(() => {
 
         lastX++;
         x = lastX;
-        if(x<=55) {
+        if (x <= 55) {
             const numarImagine = document.getElementById('numarimagine')
             TweenMax.to(numarImagine, {
-                y: -numarImagine.children[28].offsetHeight * (x - 1) - (numarImagine.children[28].offsetHeight - numarImagine.children[28].parentElement.offsetHeight) + "px",
+                y: -numarImagine.children[28].offsetHeight * (x - 1) + "px",
                 duration: .3,
                 ease: "power4.InOut",
             })
@@ -1154,17 +1226,17 @@ $(document).ready(() => {
             transform: `translate(${nextPercentage - 50}%, -50%)`
         }, { duration: 150, fill: "forwards" });
 
-        x = lastX-1;
-        if(x>=1) {
+        x = lastX - 1;
+        if (x >= 1) {
             const numarImagine = document.getElementById('numarimagine')
             TweenMax.to(numarImagine, {
-                y: -numarImagine.children[28].offsetHeight * (x - 1) - (numarImagine.children[28].offsetHeight - numarImagine.children[28].parentElement.offsetHeight) + numarImagine.children[28].offsetHeight * (lastX - x - 1) + "px",
+                y: -numarImagine.children[28].offsetHeight * (x - 1) + "px",
                 duration: .3,
                 ease: "power4.InOut",
             })
             lastX = x;
         }
-            
+
         track.dataset.prevPercentage = track.dataset.percentage;
     }
 
@@ -1175,14 +1247,23 @@ $(document).ready(() => {
     function detectTouchSupport() {
         touchSupport = jQuery.support.touch;
         console.log(touchSupport)
-        if (touchSupport === true) {
+        if (touchSupport) {
             document.getElementById('next').style.opacity = 1;
             document.getElementById('prev').style.opacity = 1;
         }
+        else {
+
+            document.getElementById('next').style.display = "none"
+            document.getElementById('prev').style.display = "none"
+        }
     }
     detectTouchSupport();
-
+    
+    /// resetare splitext pentru resize
     window.addEventListener('resize', () => {
-        resize = true;
+        resized = true;
+        if (despre.classList.contains('active') === true) {
+            init_SplitText();
+        }
     })
 })

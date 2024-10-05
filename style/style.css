@@ -423,24 +423,32 @@ body {
   -o-transition: .3s;
   transition: .3s;
 }
-#imgclasa {
-}
+
 #TextBox {
   color: white;
   font-size: 1.2rem;
   opacity: 1;
   font-family: Arial, Helvetica, sans-serif;
   text-align: justify !important;
-  position: relative;
-  top:50%;
-  -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-          transform: translateY(-50%);
+  top: 50%;
   width: 100%;
-  height: 100%;
 
 }
+@media screen and (max-width: 1200px) {
+  #elevscris {
+    font-size: 20px !important;
+  }
+  .textContact {
+    font-size: 1.05rem !important;
+  }
+  #TextBox {
 
+    font-size: .9rem;
+  }
+  .diriginte {
+    font-size: 18px !important;
+  }
+}
 .flex {
   display: -webkit-box !important;
   display: -ms-flexbox !important;
@@ -476,15 +484,14 @@ body {
 }
 #item-1 {
 
-  height: 60vh;
   width: 40%;
-  display: block;
+  display: flex;
   position: relative;
 }
 
 .flexitem,.flexitemm {
   width: 100%;
-  height: 43vh;
+  height: 44vh;
   -o-object-fit: cover;
      object-fit: cover;
   opacity: .8;
@@ -504,8 +511,8 @@ body {
 }
 #textdiriginti {
   color: white;
-  margin-top: 7.5vh;
-  padding-bottom: 9vh;
+  margin-top: 14vh;
+  padding-bottom: 6vh;
   font-size: 35px;
   text-align: center;
   font-family: Arial, Helvetica, sans-serif;
@@ -604,7 +611,7 @@ body {
 }
 
 #textGalerie {
-  padding-top: 7vh;
+  padding-top: 6vh;
   padding-bottom: 5vh;
   color: white;
   font-size: 35px;
@@ -710,7 +717,7 @@ body {
   opacity: 1;
 }
 #titluElev {
-  margin-top: 15vh;
+  margin-top: 10vh;
   color: white;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
@@ -764,7 +771,6 @@ body {
   padding-top: 7vh;
 }
 .textContact {
-  padding-top: 0.5vh;
   color: white;
   -webkit-transition: .5s;
   -o-transition: .5s;
