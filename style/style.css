@@ -170,7 +170,7 @@ body {
   -webkit-transform: translateY(-50%);
 }
 #next img, #prev img {
-  width: 4vw;
+  width: 3.5vw;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
@@ -178,6 +178,22 @@ body {
 }
 #next:hover, #prev:hover {
   cursor: pointer;
+}
+#checkDiv {
+  
+  z-index: 10001;
+  display: flex;
+  margin-top: 2vh;
+  position: fixed;
+  
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  right: 3vw;
+  font-size: 2.35vmin;
+  gap: 2vmin; 
+  font-family: Arial, Helvetica, sans-serif;
 }
 .sectiuni {
   display: -webkit-box;
@@ -207,7 +223,7 @@ body {
   opacity: 1 !important;
 }
 
-.sectiuni p {
+.sectiuni p, #checkDiv p {
   -webkit-transition: 0.5s;
   -o-transition: 0.5s;
   transition: 0.5s;
@@ -216,7 +232,7 @@ body {
   opacity: 0.5;
 }
 
-.sectiuni p:hover {
+.sectiuni p:hover, #checkDiv p:hover {
   opacity: 1;
 
 }
@@ -305,7 +321,7 @@ body {
   left: 50%;
   top: 60%;
   color: rgb(255, 255, 255);
-  font-size: 3rem;
+  font-size: 2.7rem;
   display: none;
   opacity: 0;
   transform: translate(-50%,-50%);
@@ -435,6 +451,12 @@ body {
 
 }
 @media screen and (max-width: 1200px) {
+  #checkDiv {
+    display: none;
+  }
+  #numePersoana {
+    font-size: 2.5rem;
+  }
   #elevscris {
     font-size: 20px !important;
   }

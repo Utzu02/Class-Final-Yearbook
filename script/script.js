@@ -132,15 +132,12 @@ $(document).ready(() => {
             splitTextTimeline.play();
             TweenMax.to('#close-modal', {
                 autoAlpha: 0,
-                duration: 0,
-                onComplete: () => {
-                    closeModal.style.display = 'none'
-                }
+                duration: 0
             })
             cloneTimeline.reverse();
         }
     }, +0.6)
-    
+
     splitTextTimeline = new TimelineMax({ paused: true });
 
 
@@ -224,29 +221,29 @@ $(document).ready(() => {
     /// initializare splittext
     function init_SplitText() {
         mySplitText = new SplitType('#TextBox', { type: "lines", position: "absolute" })
-            gsap.from(mySplitText.lines, {
-                scrollTrigger: {
-                    trigger: '#TextBox',
-                    toggleActions: "play none none reverse",
-                    start: "top center"
-                },
-                onComplete: () => {
-                },
-                duration: 0.4,
-                autoAlpha: 0,
-                lazy: false,
-                rotationX: -120,
-                ease: "power4.InOut",
-                force3D: true,
-                transformOrigin: "top center -150",
-                stagger: { amount: 0.4 }
+        gsap.from(mySplitText.lines, {
+            scrollTrigger: {
+                trigger: '#TextBox',
+                toggleActions: "play none none reverse",
+                start: "top center"
+            },
+            onComplete: () => {
+            },
+            duration: 0.4,
+            autoAlpha: 0,
+            lazy: false,
+            rotationX: -120,
+            ease: "power4.InOut",
+            force3D: true,
+            transformOrigin: "top center -150",
+            stagger: { amount: 0.4 }
 
-            })
+        })
     }
     /// inchidere Modal cu ESC
     document.onkeydown = function (evt) {
         evt = evt || window.event;
-        if (evt.keyCode === 27) {
+        if (evt.keyCode === 27 || evt.keyCode === 8) {
             if (escModal === "true") {
                 closeModal.click()
                 escModal = "false"
@@ -263,8 +260,7 @@ $(document).ready(() => {
         }
         if (evt.keyCode === 32) {
             console.log("DA")
-            if(spaceModal === true)
-            {
+            if (spaceModal === true) {
                 animatieElev()
             }
         }
@@ -299,6 +295,10 @@ $(document).ready(() => {
 
         x = parseInt(modal_cnt)
         console.log(x)
+        TweenMax.to('#checkDiv', {
+            autoAlpha: 0,
+            duration: .5
+        })
         const numarImagine = document.getElementById('numarimagine')
         TweenMax.to(numarImagine, {
             y: -numarImagine.children[28].offsetHeight * (x - 1) + "px",
@@ -536,7 +536,7 @@ $(document).ready(() => {
     elevi.addEventListener('click', () => {
         ////if (elevi.classList.contains('active') === false && canHover === "false") 
         if (elevi.classList.contains('active') === false) {
-            
+
             if (despre.classList.contains('active') === true) {
                 if (touchSupport) {
                     TweenMax.to('#prev', {
@@ -609,13 +609,13 @@ $(document).ready(() => {
     despre.addEventListener('click', () => {
         ////if (despre.classList.contains('active') === false && canHover === "true") 
         if (despre.classList.contains('active') === false) {
-            setTimeout(() =>{
-                if (resized===true) {
+            setTimeout(() => {
+                if (resized === true) {
                     init_SplitText()
                     console.log("resizeDA")
                     resize = false
                 }
-            },1500)
+            }, 1500)
             if (elevi.classList.contains('active') === true) {
                 console.log("DA")
                 TweenMax.to('#numePersoana', {
@@ -762,10 +762,7 @@ $(document).ready(() => {
                         document.getElementById("elevi").style.display = "none"
                         TweenMax.to('#close-modal', {
                             autoAlpha: 0,
-                            duration: 0,
-                            onComplete: () => {
-                                closeModal.style.display = 'none'
-                            }
+                            duration: 0
                         })
                     }
                 })
@@ -867,14 +864,32 @@ $(document).ready(() => {
                 autoAlpha: 0,
                 duration: .3,
             })
-            cloneTimeline.reverse()
+            setTimeout(()=> {
+                cloneTimeline.reverse()
+                if (touchSupport) {
+                    TweenMax.to('#next', {
+                        autoAlpha: 1,
+                        duration: .5
+                    })
+                }
+                if (touchSupport) {
+                    TweenMax.to('#prev', {
+                        autoAlpha: 1,
+                        duration: .5
+                    })
+                }
+            },300)
+            setTimeout(()=>{
+    
+                TweenMax.to('#checkDiv', {
+                    autoAlpha: 1,
+                    duration: .5
+                })
+            },500)
             gsap.killTweensOf('#close-modal')
             TweenMax.to('#close-modal', {
                 autoAlpha: 0,
-                duration: .5,
-                onComplete: () => {
-                    closeModal.style.display = 'none'
-                }
+                duration: .3,
             })
             /*TweenMax.to('#image-viewer', {
                 display: "none",
@@ -1022,33 +1037,41 @@ $(document).ready(() => {
     const closeModal = document.getElementById('close-modal')
 
     closeModal.addEventListener('click', () => {
+        
+        gsap.killTweensOf('#close-modal')
+        TweenMax.to('#close-modal', {
+            autoAlpha: 0,
+            duration: .3,
+        })
         TweenMax.to('#numePersoana', {
             autoAlpha: 0,
             duration: .3,
         })
         document.getElementById('numePersoana').removeEventListener('click', animatieElev)
         plus.removeEventListener('click', animatieElev)
-        if (touchSupport) {
-            TweenMax.to('#next', {
-                autoAlpha: 1,
-                duration: .5
-            })
-        }
-        if (touchSupport) {
-            TweenMax.to('#prev', {
-                autoAlpha: 1,
-                duration: .5
-            })
-        }
-        cloneTimeline.reverse()
-        gsap.killTweensOf('#close-modal')
-        TweenMax.to('#close-modal', {
-            autoAlpha: 0,
-            duration: .5,
-            onComplete: () => {
-                closeModal.style.display = 'none'
+        
+        setTimeout(()=> {
+            cloneTimeline.reverse()
+            if (touchSupport) {
+                TweenMax.to('#next', {
+                    autoAlpha: 1,
+                    duration: .5
+                })
             }
-        })
+            if (touchSupport) {
+                TweenMax.to('#prev', {
+                    autoAlpha: 1,
+                    duration: .5
+                })
+            }
+        },300)
+        setTimeout(()=>{
+
+            TweenMax.to('#checkDiv', {
+                autoAlpha: 1,
+                duration: .5
+            })
+        },500)
     })
 
 
@@ -1108,17 +1131,11 @@ $(document).ready(() => {
     function animatieElev() {
         canScroll = "false"
         escModal = "false"
-        
+
         spaceModal = false
         escAnimatieElev = "true"
-        if (!touchSupport) {
-            document.body.style.overflowY = "visible"
-            document.getElementsByTagName("html")[0].style.overflow = "visible";
-        }
-        else {
-            document.body.style.overflowY = "visible"
-            document.getElementsByTagName("html")[0].style.overflowY = "visible";
-        }
+        document.body.style.overflowY = "visible"
+        document.getElementsByTagName("html")[0].style.overflow = "visible";
 
         const elemDespre = document.getElementById(`${cloneImg.dataset.pers}`)
         document.getElementById('titluElev').innerText = document.getElementById('numePersoana').innerText
@@ -1149,7 +1166,7 @@ $(document).ready(() => {
     //// iesire animatie intrare elevi
 
     function iesireanimatieelev() {
-        
+
         spaceModal = true
         document.getElementById('despreElev').position = "absolute";
         TweenMax.to("#despreElev", {
@@ -1242,23 +1259,67 @@ $(document).ready(() => {
 
     jQuery.support.touch = 'ontouchend' in document;
 
-    var touchSupport = false;
+    let touchSupport = false;
 
+    function isTouchDevice() {
+        return (
+            (navigator.maxTouchPoints > 0) ||
+            (navigator.msMaxTouchPoints > 0));
+    }
     function detectTouchSupport() {
-        touchSupport = jQuery.support.touch;
+        if (jQuery.support.touch)
+            touchSupport = true;
+        if (isTouchDevice())
+            touchSupport = true;
         console.log(touchSupport)
-        if (touchSupport) {
-            document.getElementById('next').style.opacity = 1;
-            document.getElementById('prev').style.opacity = 1;
+        if (touchSupport === true) {
+            TweenMax.to('#next', {
+                autoAlpha: 1,
+                duration: 0
+            })
+            TweenMax.to('#prev', {
+                autoAlpha: 1,
+                duration: 0
+            })
         }
         else {
-
-            document.getElementById('next').style.display = "none"
-            document.getElementById('prev').style.display = "none"
+            TweenMax.to('#next', {
+                autoAlpha: 0,
+                duration: 0
+            })
+            TweenMax.to('#prev', {
+                autoAlpha: 0,
+                duration: 0
+            })
         }
     }
     detectTouchSupport();
-    
+    document.getElementById('checkboxSageti').addEventListener('click',() => {
+        console.log("check")
+        var checkBox = document.getElementById("checkboxSageti");
+        if (checkBox.checked === true) {
+            console.log("DA")
+            touchSupport = true
+                TweenMax.to('#next', {
+                    autoAlpha: 1,
+                    duration: .5
+                })
+                TweenMax.to('#prev', {
+                    autoAlpha: 1,
+                    duration: .5
+                })
+        } else {
+            touchSupport = false
+                TweenMax.to('#next', {
+                    autoAlpha: 0,
+                    duration: .5
+                })
+                TweenMax.to('#prev', {
+                    autoAlpha: 0,
+                    duration: .5
+                })
+        }
+    })
     /// resetare splitext pentru resize
     window.addEventListener('resize', () => {
         resized = true;
