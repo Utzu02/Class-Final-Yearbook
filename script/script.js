@@ -1083,13 +1083,19 @@ $(document).ready(() => {
         const text = element.children[0].children[0].classList[0]
         if (lastText === document.getElementById('textGalerie')) {
             //// adaugare Animatie aparitie poze galerie
-
             gsap.from(document.getElementsByClassName(text), {
                 scrollTrigger: {
                     trigger: lastText,
                     immediateRender: false,
                     toggleActions: "play none none reverse",
                     start: "100% 100%",
+                    ///optimizare incarcare
+                    /*onEnter: () => {
+                        let row = Array.from(document.getElementsByClassName(text))
+                        row.forEach((elem) => {
+                            elem.src = elem.dataset.src
+                        })
+                    }*/
                 },
                 y: '100%',
                 ease: "power4.InOut",
@@ -1107,7 +1113,15 @@ $(document).ready(() => {
                 scrollTrigger: {
                     trigger: document.getElementsByClassName(lastText)[0],
                     toggleActions: "play none none reverse",
-                    start: "-=850",
+                    ///markers: true,
+                    start: "-=800",
+                    ///optimizare incarcare
+                    /*onEnter: () => {
+                        let row = Array.from(document.getElementsByClassName(text))
+                        row.forEach((elem) => {
+                            elem.src = elem.dataset.src
+                        })
+                    }*/
                 },
                 y: '100%',
                 ease: "power4.InOut",

@@ -643,7 +643,8 @@ body {
 }
 
 .flex .item {
-  min-width: 100%
+  min-width: 100%;
+  min-height: 10vh;
 }
 
 .flex .item img {
