@@ -11,7 +11,7 @@ RO - atestat informatica
 
   5. Momentul de tranziție: Pentru mulți elevi, anii de liceu marchează o perioadă de tranziție de la adolescență la vârsta adultă. Aceasta poate fi o perioadă tumultuoasă și plină de schimbări, dar și una plină de oportunități și descoperiri. În începerea acestui proiect, scopul meu nu este doar de a păstra amintirile anilor noștri de liceu, ci și de a onora legăturile pe care le-am creat de-a lungul aestei perioade, iar peste ani, la reuniunile de liceu, acest atestat să fie o amintire vie a clasei XII- a A.
 
-EN
+EN - It graduation project
 
   The decision to center the theme of the graduation project around our high school years stems from the appreciation and gratitude that each person has for this period, which is meant to lay the foundations upon which we will build our future. It is said that high school years are the most beautiful years, and if you don’t live them fully, you will regret it for the rest of your life. This saying echoed in my mind even before I entered high school, coming from parents, adults, and older friends. And here I am, at the end of these four years, able to say they were right. High school is not just a chapter in our lives; it is a mosaic of memories that have shaped us into the individuals we are today. The friendships formed, the lessons learned, and the challenges overcome during this time have left an indelible mark on each of us. Overall, high school years are a time of personal development, exploration, and growth. Here are some important aspects of the high school experience:
 
