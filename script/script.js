@@ -258,17 +258,24 @@ $(document).ready(() => {
                 console.log("modal not open")
             }
         }
-        if (evt.keyCode === 32) {
+        else if (evt.keyCode === 32) {
             console.log("DA")
             if (spaceModal === true) {
                 animatieElev()
             }
         }
+        else if(evt.keyCode === 37) {
+            if(modalOpen===false) document.getElementById('prev').click()
+        }
+        else if(evt.keyCode === 39)
+        {
+            if(modalOpen===false) document.getElementById('next').click()
+        }
     };
-
+    let modalOpen = false;
     //// deschidere Modal
     function openModal(element) {
-
+        modalOpen = true
         var duration = 300;
         if (parseInt(modal_cnt) - x === 0) duration = 150
         else if (Math.abs(parseInt(modal_cnt) - x) < 2) duration = 250
@@ -1005,6 +1012,7 @@ $(document).ready(() => {
         track.dataset.canMove = "false";
         track.dataset.lightBox = "true";
         canHover === "false"
+        modal_cnt = lastX
         openModal(images[x - 1]);
         plus.removeEventListener('click', openModalPlus)
     }
@@ -1037,7 +1045,6 @@ $(document).ready(() => {
     const closeModal = document.getElementById('close-modal')
 
     closeModal.addEventListener('click', () => {
-        
         gsap.killTweensOf('#close-modal')
         TweenMax.to('#close-modal', {
             autoAlpha: 0,
@@ -1072,6 +1079,10 @@ $(document).ready(() => {
                 duration: .5
             })
         },500)
+        setTimeout(()=> {
+
+            modalOpen = false
+        },1000)
     })
 
 
