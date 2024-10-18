@@ -259,10 +259,7 @@ $(document).ready(() => {
             }
         }
         else if (evt.keyCode === 32) {
-            console.log("DA")
-            if (spaceModal === true) {
-                animatieElev()
-            }
+            plus.click()
         }
         else if(evt.keyCode === 37) {
             if(modalOpen===false) document.getElementById('prev').click()
@@ -275,6 +272,7 @@ $(document).ready(() => {
     let modalOpen = false;
     //// deschidere Modal
     function openModal(element) {
+        openSpaceModal = false
         modalOpen = true
         var duration = 300;
         if (parseInt(modal_cnt) - x === 0) duration = 150
@@ -316,11 +314,12 @@ $(document).ready(() => {
 
         document.body.style.pointerEvents = "none"
         document.getElementsByTagName("html")[0].style.pointerEvents = "none";
-
-        track.dataset.percentage = track.dataset.prevPercentage
-        setTimeout(() => {
+        setTimeout(()=> {
             spaceModal = true
             escModal = "true"
+        }, 700)
+        track.dataset.percentage = track.dataset.prevPercentage
+        setTimeout(() => {
             cloneTimelineConstructor()
             plus.removeEventListener('click', openModalPlus)
             var rect = element.getBoundingClientRect();
@@ -543,6 +542,9 @@ $(document).ready(() => {
     elevi.addEventListener('click', () => {
         ////if (elevi.classList.contains('active') === false && canHover === "false") 
         if (elevi.classList.contains('active') === false) {
+            openSpaceModal = true
+            spaceModal = false
+            escModal = "false"
 
             if (despre.classList.contains('active') === true) {
                 if (touchSupport) {
@@ -570,6 +572,7 @@ $(document).ready(() => {
                     duration: .5,
                     onComplete: () => {
                         document.getElementById("clasaImg").style.visibility = "hidden"
+                        plus.addEventListener('click', openModalPlus)
                     }
                 })
                 TweenMax.to(containerDespre, {
@@ -605,7 +608,7 @@ $(document).ready(() => {
                     delay: .3,
                     onComplete: () => {
                         splitTextTimeline.reverse();
-
+                        plus.addEventListener('click', openModalPlus)
                     }
                 })
             }
@@ -624,6 +627,13 @@ $(document).ready(() => {
                 }
             }, 1500)
             if (elevi.classList.contains('active') === true) {
+                
+            plus.removeEventListener('click', openModalPlus)
+            plus.removeEventListener('click', animatieElev)
+            openSpaceModal = false
+            spaceModal = false
+            escModal = "false"
+
                 console.log("DA")
                 TweenMax.to('#numePersoana', {
                     autoAlpha: 0,
@@ -720,6 +730,13 @@ $(document).ready(() => {
                 ///iesire despre
             }
             else {
+                
+            plus.removeEventListener('click', openModalPlus)
+            plus.removeEventListener('click', animatieElev)
+            openSpaceModal = false
+            spaceModal = false
+            escModal = "false"
+
                 TweenMax.to('#numePersoana', {
                     autoAlpha: 0,
                     duration: .3,
@@ -1043,7 +1060,7 @@ $(document).ready(() => {
 
     //// functie inchidere modal
     const closeModal = document.getElementById('close-modal')
-
+    let openSpaceModal = false
     closeModal.addEventListener('click', () => {
         gsap.killTweensOf('#close-modal')
         TweenMax.to('#close-modal', {
@@ -1078,6 +1095,7 @@ $(document).ready(() => {
                 autoAlpha: 1,
                 duration: .5
             })
+            openSpaceModal = true
         },500)
         setTimeout(()=> {
 
@@ -1201,7 +1219,7 @@ $(document).ready(() => {
             display: "none",
             onComplete: () => {
                 if (elevi.classList.contains('active') === true) {
-
+                    
                     document.body.style.overflowY = "hidden"
                     document.getElementsByTagName("html")[0].style.overflow = "hidden";
                 }
