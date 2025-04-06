@@ -1,5 +1,11 @@
 # 🎓 High School Graduation Project - Class XII-A 🎓
 
+## 🚀 Try This Site
+
+Click the button below to experience the site live!
+
+[![Try This Site](https://img.shields.io/badge/Try%20This%20Site-Visit%20Now-blue)](https://utzu02.github.io/Class-Final-Yearbook/)
+
 ## 🏫 Celebrating Our High School Journey
 
 The decision to center the theme of this graduation project around our high school years stems from the deep appreciation and gratitude we feel for this transformative period in our lives. High school is not just a chapter; it’s a **mosaic of memories** that have shaped us into the individuals we are today.
@@ -44,9 +50,3 @@ In the years to come, at our high school reunions, this project will serve as a 
 This graduation project is dedicated to **Class XII-A**, to every laugh, every tear, and every lesson learned together. Let it stand as a testament to the beautiful mosaic of memories we’ve created and the bright futures we’re ready to embrace. 💫
 
 ---
-
-## 🚀 Try This Site
-
-Click the button below to experience the site live!
-
-[![Try This Site](https://img.shields.io/badge/Try%20This%20Site-Visit%20Now-blue)](https://utzu02.github.io/Class-Final-Yearbook/)
