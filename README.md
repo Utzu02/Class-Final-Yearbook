@@ -42,3 +42,11 @@ In the years to come, at our high school reunions, this project will serve as a 
 ## 🌟 A Tribute to Class XII-A
 
 This graduation project is dedicated to **Class XII-A**, to every laugh, every tear, and every lesson learned together. Let it stand as a testament to the beautiful mosaic of memories we’ve created and the bright futures we’re ready to embrace. 💫
+
+---
+
+## 🚀 Try This Site
+
+Click the button below to experience the site live!
+
+[![Try This Site](https://img.shields.io/badge/Try%20This%20Site-Visit%20Now-blue)](https://utzu02.github.io/Class-Final-Yearbook/)
