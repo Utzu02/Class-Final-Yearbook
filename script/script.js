@@ -32,7 +32,7 @@ $(document).ready(() => {
     Object.freeze(CONFIG.ANIMATION);
 
     /**
-     * Animates team members with staggered timing
+     * Animates team members with modern staggered effects
      * @param {string} selector - CSS selector ('.diriginte' or '.membru')
      * @param {boolean} reverse - Animate in reverse order
      * @param {number} staggerDelay - Delay between each element (ms)
@@ -40,23 +40,47 @@ $(document).ready(() => {
      * @param {Function} onComplete - Callback when complete
      */
     function animateTeamMembers(selector, reverse = false, staggerDelay = CONFIG.ANIMATION.TEAM_MEMBER_STAGGER, initialDelay = CONFIG.ANIMATION.TEAM_MEMBER_INITIAL_DELAY, onComplete = null) {
-        setTimeout(() => {
-            const elements = document.querySelectorAll(selector);
-            const elementCount = elements.length;
-            let i = reverse ? elementCount - 1 : 0;
+        const elements = document.querySelectorAll(selector);
 
-            for (const element of elements) {
-                setTimeout(() => {
-                    element.classList.toggle('andir');
-                }, Math.abs(i) * staggerDelay);
-
-                i = reverse ? i - 1 : i + 1;
-            }
-
-            if (onComplete) {
-                setTimeout(onComplete, elementCount * staggerDelay);
-            }
-        }, initialDelay);
+        if (reverse) {
+            // Reverse animation - fade out with modern effects
+            gsap.to(elements, {
+                y: -30,
+                autoAlpha: 0,
+                scale: 0.95,
+                rotationX: -5,
+                duration: .5,
+                stagger: staggerDelay / 1000,
+                ease: "power2.in",
+                delay: initialDelay / 1000,
+                onComplete: () => {
+                    if (onComplete) onComplete();
+                }
+            });
+        } else {
+            // Forward animation - modern reveal with bounce
+            gsap.fromTo(elements,
+                {
+                    y: 60,
+                    autoAlpha: 0,
+                    scale: 0.8,
+                    rotationX: 15
+                },
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    scale: 1,
+                    rotationX: 0,
+                    duration: .8,
+                    stagger: staggerDelay / 1000,
+                    ease: "back.out(1.4)",
+                    delay: initialDelay / 1000,
+                    onComplete: () => {
+                        if (onComplete) onComplete();
+                    }
+                }
+            );
+        }
     }
 
     //// initializare variabile globale
@@ -109,13 +133,408 @@ $(document).ready(() => {
     let pendingPositionUpdate = null  // Store timeout ID for position updates
     let lastMoveTime = 0  // For throttling mouse move
     let rafId = null  // RequestAnimationFrame ID for smooth animations
+    
+    //// Thumbnail carousel variables
+    let thumbnailCarousel = null
+    let thumbnailContainer = null
+    let thumbnailTrack = null
+    let thumbnailScrollPosition = 0
+    let currentCarouselIndex = 0
 
     track.dataset.lightBox = "false"
     track.dataset.percentage = 0;
     var canScroll = true
     document.getElementById('nrtotal').textContent = (document.querySelectorAll(".image").length - 1) / 2
+    
+    //// Create thumbnail carousel
+    createThumbnailCarousel()
 
 
+    //// Create thumbnail carousel structure
+    //// Initialize thumbnail carousel
+    function createThumbnailCarousel() {
+        // Get references to existing HTML elements
+        thumbnailCarousel = document.getElementById('thumbnail-carousel')
+        thumbnailContainer = document.getElementById('thumbnail-container')
+        thumbnailTrack = document.getElementById('thumbnail-track')
+        const leftScroll = document.getElementById('thumb-scroll-left')
+        const rightScroll = document.getElementById('thumb-scroll-right')
+        
+        // Add event listeners for scroll arrows
+        leftScroll.addEventListener('click', () => scrollThumbnailsHorizontal('left'))
+        rightScroll.addEventListener('click', () => scrollThumbnailsHorizontal('right'))
+        
+        // Populate thumbnails with ALL carousel images (including duplicates)
+        for (let i = 0; i < images.length; i++) {
+            const thumb = document.createElement('div')
+            thumb.className = 'thumbnail-item'
+            thumb.dataset.carouselIndex = i
+            
+            // Determine actual student ID (1-28)
+            const cntValue = images[i].dataset.cnt || images[i].getAttribute('data-cnt')
+            let studentId = parseInt(cntValue)
+            
+            if (isNaN(studentId)) {
+                studentId = (i % CONFIG.STUDENT_COUNT) + 1
+            } else if (studentId > CONFIG.STUDENT_COUNT) {
+                studentId = studentId - CONFIG.STUDENT_COUNT
+            }
+            
+            thumb.dataset.studentId = studentId
+            
+            const img = document.createElement('img')
+            img.src = images[i].src
+            thumb.appendChild(img)
+            
+            thumb.addEventListener('mouseenter', () => {
+                if (parseInt(thumb.dataset.carouselIndex) !== currentCarouselIndex) {
+                    gsap.to(img, { scale: 1.1, duration: 0.3 })
+                }
+            })
+            thumb.addEventListener('mouseleave', () => {
+                if (parseInt(thumb.dataset.carouselIndex) !== currentCarouselIndex) {
+                    gsap.to(img, { scale: 1, duration: 0.3 })
+                }
+            })
+            thumb.addEventListener('click', function(e) {
+                e.stopPropagation()
+                const thumbElement = this.classList.contains('thumbnail-item') ? this : this.closest('.thumbnail-item')
+                const clickedCarouselIndex = parseInt(thumbElement.dataset.carouselIndex)
+                
+                if (clickedCarouselIndex !== currentCarouselIndex && !isNaN(clickedCarouselIndex)) {
+                    switchToThumbnail(clickedCarouselIndex, 'left')
+                }
+            })
+            
+            thumbnailTrack.appendChild(thumb)
+        }
+        
+        // Initialize navigation overlays
+        initializeImageNavigation()
+    }
+    
+    //// Scroll thumbnails horizontally
+    function scrollThumbnailsHorizontal(direction) {
+        const thumbWidth = 72 // 64px + 8px gap
+        const scrollAmount = thumbWidth * 3 // Scroll 3 items at a time
+        const containerWidth = thumbnailContainer.offsetWidth - 16 // Account for padding
+        const visibleCount = Math.floor(containerWidth / thumbWidth)
+        // Calculate total width needed for all thumbnails
+        const totalWidth = images.length * thumbWidth
+        // Max scroll is total width minus visible area
+        const maxScroll = Math.max(0, totalWidth - containerWidth)
+        
+        if (direction === 'left') {
+            thumbnailScrollPosition = Math.max(0, thumbnailScrollPosition - scrollAmount)
+        } else {
+            thumbnailScrollPosition = Math.min(maxScroll, thumbnailScrollPosition + scrollAmount)
+        }
+        
+        gsap.to(thumbnailTrack, {
+            x: -thumbnailScrollPosition,
+            duration: 0.4,
+            ease: 'power2.out'
+        })
+    }
+    
+    //// Initialize navigation overlays on main image
+    function initializeImageNavigation() {
+        // Get references to existing HTML elements
+        const leftImageNav = document.getElementById('image-nav-left')
+        const rightImageNav = document.getElementById('image-nav-right')
+        
+        // Add event listeners with rotation animation that restarts on each click
+        leftImageNav.addEventListener('click', () => {
+            // Restart animation on each click by removing and re-adding class
+            leftImageNav.classList.remove('rotate')
+            void leftImageNav.offsetWidth // Force reflow to restart animation
+            leftImageNav.classList.add('rotate')
+            navigateStudent('prev')
+        })
+        rightImageNav.addEventListener('click', () => {
+            // Restart animation on each click by removing and re-adding class
+            rightImageNav.classList.remove('rotate')
+            void rightImageNav.offsetWidth // Force reflow to restart animation
+            rightImageNav.classList.add('rotate')
+            navigateStudent('next')
+        })
+    }
+    
+    //// Navigate to previous or next student
+    function navigateStudent(direction) {
+        // Cancel name animation if navigation happens within 200ms
+        if (window.nameAnimationTimeout) {
+            clearTimeout(window.nameAnimationTimeout)
+            window.nameAnimationTimeout = null
+        }
+        
+        let newIndex
+        let slideDirection
+        
+        if (direction === 'prev') {
+            newIndex = currentCarouselIndex - 1
+            if (newIndex < 0) newIndex = images.length - 1 // Wrap to last carousel image
+            slideDirection = 'right' // Sliding right when going to previous
+        } else {
+            newIndex = currentCarouselIndex + 1
+            if (newIndex >= images.length) newIndex = 0 // Wrap to first carousel image
+            slideDirection = 'left' // Sliding left when going to next
+        }
+        
+        switchToThumbnail(newIndex, slideDirection)
+    }
+    
+    //// Scroll thumbnails left or right
+    function scrollThumbnails(direction) {
+        const thumbWidth = 92 // 80px + 12px gap
+        const visibleCount = Math.floor(thumbnailContainer.offsetWidth / thumbWidth)
+        const maxScroll = Math.max(0, (CONFIG.STUDENT_COUNT - visibleCount) * thumbWidth)
+        
+        if (direction === 'left') {
+            thumbnailScrollPosition = Math.max(0, thumbnailScrollPosition - thumbWidth * 3)
+        } else {
+            thumbnailScrollPosition = Math.min(maxScroll, thumbnailScrollPosition + thumbWidth * 3)
+        }
+        
+        gsap.to(thumbnailTrack, {
+            x: -thumbnailScrollPosition,
+            duration: 0.4,
+            ease: 'power2.out'
+        })
+    }
+    
+    //// Switch to a different thumbnail
+    function switchToThumbnail(carouselIndex, direction) {
+        if (carouselIndex === currentCarouselIndex) return
+        
+        const oldIndex = currentCarouselIndex
+        currentCarouselIndex = carouselIndex
+        
+        // Get the exact image from the carousel at this index
+        const targetImage = images[carouselIndex]
+        
+        if (!targetImage) {
+            return
+        }
+        
+        // Get student ID for highlighting purposes
+        let studentId = parseInt(targetImage.dataset.cnt)
+        if (studentId > CONFIG.STUDENT_COUNT) {
+            studentId = studentId - CONFIG.STUDENT_COUNT
+        }
+        
+        // Update active thumbnail styling - highlight the clicked carousel position
+        document.querySelectorAll('.thumbnail-item').forEach((thumb) => {
+            const thumbCarouselIndex = parseInt(thumb.dataset.carouselIndex)
+            if (thumbCarouselIndex === carouselIndex) {
+                thumb.classList.add('active')
+            } else {
+                thumb.classList.remove('active')
+            }
+        })
+        
+        // Don't clean up existing animations - let them stack when clicking rapidly
+        
+        // Create a second image element for smooth sliding
+        const nextImg = document.createElement('img')
+        nextImg.id = 'clone-image-next'
+        nextImg.src = targetImage.src
+        
+        // Calculate z-index for stacking - count existing slide images
+        const existingSlides = document.querySelectorAll('[id^="clone-image-"]')
+        const zIndex = 10000 + existingSlides.length + 1
+        
+        nextImg.style.cssText = `
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: ${zIndex};
+            will-change: transform;
+        `
+        
+        // Position next image off-screen for full slide animation
+        const slideFrom = direction === 'left' ? window.innerWidth : -window.innerWidth
+        const slideTo = direction === 'left' ? -window.innerWidth : window.innerWidth
+        
+        // Set initial position and add to DOM
+        gsap.set(nextImg, { 
+            x: slideFrom,
+            force3D: true
+        })
+        
+        document.body.appendChild(nextImg)
+        
+        // Slide the previous image out (could be cloneImg or a previous nextImg)
+        const currentTopImage = existingSlides.length > 0 ? existingSlides[existingSlides.length - 1] : cloneImg
+        gsap.to(currentTopImage, {
+            x: slideTo,
+            duration: 0.45,
+            ease: "power2.out",
+            force3D: true,
+            onComplete: () => {
+                // Remove the old image after it slides out
+                if (currentTopImage !== cloneImg && currentTopImage.parentNode) {
+                    currentTopImage.remove()
+                }
+            }
+        })
+        
+        // Slide the next image in
+        gsap.to(nextImg, {
+            x: 0,
+            duration: 0.45,
+            ease: "power2.out",
+            force3D: true,
+            onComplete: () => {
+                // Update the main clone image with final state
+                cloneImg.src = targetImage.src
+                cloneImg.dataset.text = targetImage.dataset.text
+                cloneImg.dataset.src = targetImage.dataset.src
+                cloneImg.dataset.pers = targetImage.dataset.pers
+                
+                // Reset cloneImg position
+                gsap.set(cloneImg, { 
+                    x: 0,
+                    clearProps: 'transform,force3D,willChange'
+                })
+                
+                // Remove the temporary next image
+                nextImg.remove()
+            }
+        })
+        
+        // Reset name to initial state before updating text
+        numePersoana.classList.remove('animate-in')
+        gsap.set(numePersoana, {
+            opacity: 0,
+            y: '50px',
+            clearProps: 'transform'
+        })
+        
+        // Update name text
+        numePersoana.innerText = targetImage.dataset.text
+        
+        // Restart animation timeout for new name
+        if (window.nameAnimationTimeout) {
+            clearTimeout(window.nameAnimationTimeout)
+        }
+        window.nameAnimationTimeout = setTimeout(() => {
+            numePersoana.classList.add('animate-in')
+        }, 200)
+        
+        // Update target position for centering when modal closes
+        targetCenterPosition = carouselIndex + 1 // Carousel position for centering
+        
+        // Calculate student ID for the number display (1-28)
+        const displayStudentId = studentId > CONFIG.STUDENT_COUNT ? studentId - CONFIG.STUDENT_COUNT : studentId
+        
+        // Update student number
+        TweenMax.to(numarImagine, {
+            y: -numarImagine.children[CONFIG.STUDENT_COUNT].offsetHeight * (displayStudentId - 1) + "px",
+            duration: .4,
+            ease: "power4.InOut",
+        })
+        
+        // Auto-scroll thumbnails to keep active one visible
+        centerActiveThumbnail(carouselIndex)
+    }
+    
+    //// Center active thumbnail in view
+    function centerActiveThumbnail(carouselIndex) {
+        const thumbWidth = 72 // 64px + 8px gap
+        const containerWidth = thumbnailContainer.offsetWidth
+        const visibleCount = 8 // Show 8 items at a time
+        const targetPosition = carouselIndex * thumbWidth - (containerWidth / 2) + (thumbWidth / 2)
+        const maxScroll = Math.max(0, (images.length - visibleCount) * thumbWidth)
+        
+        thumbnailScrollPosition = Math.max(0, Math.min(maxScroll, targetPosition))
+        
+        gsap.to(thumbnailTrack, {
+            x: -thumbnailScrollPosition,
+            duration: 0.4,
+            ease: 'power2.out'
+        })
+    }
+    
+    //// Show thumbnail carousel
+    function showThumbnailCarousel(activeCarouselIndex) {
+        currentCarouselIndex = activeCarouselIndex
+        thumbnailScrollPosition = 0
+        
+        // Reset and show carousel
+        thumbnailCarousel.style.display = 'flex'
+        gsap.set(thumbnailTrack, { x: 0 })
+        
+        // Update active thumbnail - highlight the specific carousel position
+        document.querySelectorAll('.thumbnail-item').forEach((thumb) => {
+            const thumbCarouselIndex = parseInt(thumb.dataset.carouselIndex)
+            if (thumbCarouselIndex === activeCarouselIndex) {
+                thumb.classList.add('active')
+            } else {
+                thumb.classList.remove('active')
+            }
+        })
+        
+        // Animate in
+        gsap.fromTo(thumbnailCarousel,
+            { x: 50, autoAlpha: 0 },
+            { x: 0, autoAlpha: 1, duration: 0.5, delay: 0.4, ease: 'power2.out' }
+        )
+        
+        // Center active thumbnail
+        setTimeout(() => centerActiveThumbnail(activeCarouselIndex), 100)
+    }
+    
+    //// Show image navigation overlays
+    function showImageNavigation() {
+        const leftNav = document.getElementById('image-nav-left')
+        const rightNav = document.getElementById('image-nav-right')
+        
+        leftNav.style.display = 'flex'
+        rightNav.style.display = 'flex'
+        
+        gsap.fromTo(leftNav,
+            { x: -30, autoAlpha: 0 },
+            { x: 0, autoAlpha: 0.7, duration: 0.5, delay: 0.5, ease: 'power2.out' }
+        )
+        gsap.fromTo(rightNav,
+            { x: 30, autoAlpha: 0 },
+            { x: 0, autoAlpha: 0.7, duration: 0.5, delay: 0.5, ease: 'power2.out' }
+        )
+    }
+    
+    //// Hide image navigation overlays
+    function hideImageNavigation() {
+        const leftNav = document.getElementById('image-nav-left')
+        const rightNav = document.getElementById('image-nav-right')
+        
+        gsap.to([leftNav, rightNav], {
+            autoAlpha: 0,
+            duration: 0.3,
+            ease: 'power2.in',
+            onComplete: () => {
+                leftNav.style.display = 'none'
+                rightNav.style.display = 'none'
+            }
+        })
+    }
+    
+    //// Hide thumbnail carousel
+    function hideThumbnailCarousel() {
+        gsap.to(thumbnailCarousel, {
+            x: 50,
+            autoAlpha: 0,
+            duration: 0.3,
+            ease: 'power2.in',
+            onComplete: () => {
+                thumbnailCarousel.style.display = 'none'
+            }
+        })
+    }
+    
     //// fade-in continut pagina
     TweenMax.to('body', {
         autoAlpha: 1,
@@ -222,7 +641,9 @@ $(document).ready(() => {
                 autoAlpha: 0,
                 duration: 0
             })
-            cloneTimeline.reverse();
+            if (cloneImg.style.width !== '0px') {
+                reverseCloneAnimation(0, 0, 0, 0);
+            }
         }
     }, +0.6)
 
@@ -230,48 +651,61 @@ $(document).ready(() => {
 
 
 
-    //// functie fade-in element imagini
+    //// functie fade-in element imagini - Modern hover effect
     function FadeInAnimation(element) {
-        let FadeInAnimation = TweenMax.to(element, {
-            paused: true,
+        let hoverTimeline = gsap.timeline({ paused: true });
+
+        hoverTimeline.to(element, {
             autoAlpha: 1,
-            duration: .15,
-            ease: "power4.out",
-        })
+            scale: 1.05,
+            y: -8,
+            duration: .4,
+            ease: "power2.out",
+        });
+
         element.addEventListener('mouseover', () => {
-            if (canHover) FadeInAnimation.play()
-            else if (canHoverDespre === "true") FadeInAnimation.play()
-        })
+            if (canHover) hoverTimeline.play();
+            else if (canHoverDespre === "true") hoverTimeline.play();
+        });
+
         element.addEventListener('mouseleave', () => {
-            if (canHover) FadeInAnimation.reverse()
-            else if (canHoverDespre === "true") FadeInAnimation.reverse()
-        })
+            if (canHover) hoverTimeline.reverse();
+            else if (canHoverDespre === "true") hoverTimeline.reverse();
+        });
     }
-    //// functie fade-in element
-    let FadeIn = TweenMax.to(element, {
-        display: "block",
-        autoAlpha: 1,
-        duration: .3,
-        onReverseComplete: () => {
-            numePersoana.style.display = 'none'
-            FadeIn.kill()
-        }
-    })
+    //// functie fade-in element - Modern text reveal
+    let FadeIn = gsap.timeline({ paused: true });
+
     function FadeInAny(element, ok) {
         if (ok === true) {
-            element.innerText = cloneImg.dataset.text
-            FadeIn = TweenMax.to(element, {
-                display: "block",
-                autoAlpha: 1,
-                duration: .3,
+            element.innerText = cloneImg.dataset.text;
+            element.style.display = 'block';
+
+            FadeIn = gsap.timeline({
                 onReverseComplete: () => {
-                    numePersoana.style.display = 'none'
-                    FadeIn.kill()
+                    numePersoana.style.display = 'none';
                 }
-            })
-            FadeIn.play()
+            });
+
+            // Modern reveal animation with slight blur effect
+            FadeIn.fromTo(element,
+                {
+                    autoAlpha: 0,
+                    y: 20,
+                    scale: 0.95
+                },
+                {
+                    autoAlpha: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: .5,
+                    ease: "back.out(1.2)"
+                }
+            );
+
+            FadeIn.play();
         }
-        else FadeIn.reverse()
+        else FadeIn.reverse();
     }
     //// marire imagine tot ecranul
     var ap = [];
@@ -347,7 +781,10 @@ $(document).ready(() => {
             }
         }
         else if (evt.keyCode === 32) {
-            plus.click()
+            // Space key - only trigger plus when modal is NOT open
+            if (modalOpen === false) {
+                plus.click()
+            }
         }
         else if(evt.keyCode === 37) {
             if(modalOpen===false) prevBtn.click()
@@ -358,6 +795,9 @@ $(document).ready(() => {
         }
     };
     let modalOpen = false;
+    let targetCenterPosition = null; // Store the position to center on after modal closes
+    let clickedElement = null; // Store the clicked element reference
+
     //// deschidere Modal
     function openModal(element) {
         openSpaceModal = false
@@ -382,63 +822,15 @@ $(document).ready(() => {
             studentId = studentId - CONFIG.STUDENT_COUNT;
         }
 
-        // Find the closest instance of this student to current position x
-        // The student appears at: studentId and studentId + 28 (if < 28)
-        let possiblePositions = [studentId];
-        if (studentId < CONFIG.STUDENT_COUNT) {
-            possiblePositions.push(studentId + CONFIG.STUDENT_COUNT);
-        }
+        // Store the clicked element and target position for centering after close
+        clickedElement = element;
+        targetCenterPosition = clickedPosition;
 
-        // Calculate which instance is closer using circular distance
-        // In a circular carousel, distance wraps around at the edges
-        let bestPosition = possiblePositions[0];
-        let minDistance = Infinity;
+        // Don't move carousel - it stays at current position
+        // Only use studentId for displaying the correct student in modal
+        var duration = 150; // Fast transition since carousel doesn't move
 
-        for (let pos of possiblePositions) {
-            // Calculate circular distance (considering wrap-around)
-            let linearDist = Math.abs(pos - x);
-            let circularDist = Math.min(linearDist, CONFIG.TOTAL_IMAGES - linearDist);
-
-            if (circularDist < minDistance) {
-                minDistance = circularDist;
-                bestPosition = pos;
-            }
-        }
-
-        let targetPosition = bestPosition;
-        let distance = Math.abs(targetPosition - x);
-
-        // Adjust duration based on distance
-        var duration = 300;
-        if (distance === 0) duration = 150
-        else if (distance < 2) duration = 250
-        else if (distance < 3) duration = 350
-        else duration = 450
-
-        // Calculate target percentage for the target position
-        let targetPercentage;
-        if (targetPosition === CONFIG.STUDENT_COUNT) {
-            targetPercentage = 0;
-        }
-        else if (targetPosition <= CONFIG.STUDENT_COUNT) {
-            targetPercentage = CONFIG.MAX_PERCENTAGE / CONFIG.STUDENT_COUNT_MINUS_1 * (CONFIG.STUDENT_COUNT - targetPosition);
-        }
-        else {
-            // For positions 29-55 (duplicates), calculate extended percentage
-            let posInDuplicates = targetPosition - CONFIG.STUDENT_COUNT; // 1-27
-            targetPercentage = -CONFIG.MAX_PERCENTAGE / CONFIG.STUDENT_COUNT_MINUS_1 * posInDuplicates;
-        }
-
-        track.dataset.prevPercentage = targetPercentage;
-        track.dataset.percentage = targetPercentage;
-        track.animate({
-            transform: `translate(${targetPercentage - 50}%, -50%)`
-        }, { duration: duration, fill: "forwards" });
-
-        // Update x to the actual target position (1-55), not just studentId
-        x = targetPosition
-        lastX = x;
-        console.log("Moving to position:", x, "Student:", studentId)
+        console.log("Opening modal for student:", studentId, "Will center on position:", clickedPosition, "after close")
 
         // Smooth fade out of UI elements
         TweenMax.to(checkDiv, {
@@ -446,26 +838,6 @@ $(document).ready(() => {
             duration: .4,
             ease: "power2.out"
         })
-
-        // Fade out other carousel images smoothly and highlight selected image
-        document.querySelectorAll('.image').forEach((img) => {
-            if (img !== element) {
-                TweenMax.to(img, {
-                    autoAlpha: 0.3,
-                    scale: 0.95,
-                    duration: .5,
-                    ease: "power2.out"
-                });
-            } else {
-                // Highlight the selected image
-                TweenMax.to(img, {
-                    autoAlpha: 1,
-                    scale: 1.05,
-                    duration: .4,
-                    ease: "power2.out"
-                });
-            }
-        });
 
         // Display the student number (1-28), not the carousel position (1-55)
         TweenMax.to(numarImagine, {
@@ -481,16 +853,12 @@ $(document).ready(() => {
             escModal = true
         }, 700)
 
-        // Unlock after animation completes and verify position
-        setTimeout(() => {
+        // Unlock after animation completes
             isAnimatingCarousel = false;
-            // Verify that we ended up at the correct position
-            track.dataset.percentage = targetPercentage;
-            track.dataset.prevPercentage = targetPercentage;
-        }, duration + 50)
-        setTimeout(() => {
             cloneTimelineConstructor()
             plus.removeEventListener('click', openModalPlus)
+
+            // Element is already hidden, just get its position for the clone
             var rect = element.getBoundingClientRect();
             cloneImg.style.left = rect.left + "px";
             cloneImg.style.top = rect.top + "px";
@@ -514,13 +882,92 @@ $(document).ready(() => {
                 })
             }
             cloneTimeline.play();
-        }, duration + 100)
-        setTimeout(() => {
-
             bodyElement.style.pointerEvents = "auto"
             htmlElement.style.pointerEvents = "auto";
-        }, duration + 320)
+            
+            // Set the name from the clicked element
+            numePersoana.innerText = element.dataset.text
+            
+            // Show thumbnail carousel with the actual carousel position clicked
+            showThumbnailCarousel(clickedPosition - 1)
+            
+            // Show image navigation
+            showImageNavigation()
 
+    }
+
+    //// Center carousel on a specific position after modal close
+    function centerCarouselOnPosition(targetPosition) {
+        // Find the closest instance of this student to current position x
+        let studentId = targetPosition;
+        if (studentId > CONFIG.STUDENT_COUNT) {
+            studentId = studentId - CONFIG.STUDENT_COUNT;
+        }
+
+        // The student appears at: studentId and studentId + 28 (if <= 28)
+        let possiblePositions = [studentId];
+        if (studentId <= CONFIG.STUDENT_COUNT) {
+            possiblePositions.push(studentId + CONFIG.STUDENT_COUNT);
+        }
+
+        // Calculate which instance is closer using circular distance
+        let bestPosition = possiblePositions[0];
+        let minDistance = Infinity;
+
+        for (let pos of possiblePositions) {
+            // Calculate circular distance (considering wrap-around)
+            let linearDist = Math.abs(pos - x);
+            let circularDist = Math.min(linearDist, CONFIG.TOTAL_IMAGES - linearDist);
+
+            if (circularDist < minDistance) {
+                minDistance = circularDist;
+                bestPosition = pos;
+            }
+        }
+
+        let finalPosition = bestPosition;
+        let distance = Math.abs(finalPosition - x);
+
+        // Adjust duration based on distance
+        var duration = 400;
+        if (distance === 0) return; // Already centered
+        else if (distance < 2) duration = 300;
+        else if (distance < 5) duration = 450;
+        else duration = 600;
+
+        // Calculate target percentage for the target position
+        let targetPercentage;
+        if (finalPosition === CONFIG.STUDENT_COUNT) {
+            targetPercentage = 0;
+        }
+        else if (finalPosition <= CONFIG.STUDENT_COUNT) {
+            targetPercentage = CONFIG.MAX_PERCENTAGE / CONFIG.STUDENT_COUNT_MINUS_1 * (CONFIG.STUDENT_COUNT - finalPosition);
+        }
+        else {
+            // For positions 29-55 (duplicates), calculate extended percentage
+            let posInDuplicates = finalPosition - CONFIG.STUDENT_COUNT; // 1-27
+            targetPercentage = -CONFIG.MAX_PERCENTAGE / CONFIG.STUDENT_COUNT_MINUS_1 * posInDuplicates;
+        }
+
+        // Smooth animation to center position
+        track.dataset.prevPercentage = targetPercentage;
+        track.dataset.percentage = targetPercentage;
+        track.animate({
+            transform: `translate(${targetPercentage - 50}%, -50%)`
+        }, { duration: duration, fill: "forwards", easing: "ease-out" });
+
+        // Update x to the centered position
+        x = finalPosition;
+        lastX = x;
+
+        // Update the student number display
+        TweenMax.to(numarImagine, {
+            y: -numarImagine.children[CONFIG.STUDENT_COUNT].offsetHeight * (studentId - 1) + "px",
+            duration: .4,
+            ease: "power4.InOut",
+        });
+
+        console.log("Centered carousel on position:", finalPosition, "Student:", studentId);
     }
 
     //// resetare Timeline Clona
@@ -532,15 +979,25 @@ $(document).ready(() => {
         cloneImg.style.width = 0 + "px"
         cloneImg.style.height = 0 + "px"
 
-        // Restore all carousel images to their original opacity and scale
+        // Restore all carousel images to their original opacity, scale, and visibility
         document.querySelectorAll('.image').forEach((img) => {
             TweenMax.to(img, {
                 autoAlpha: 0.8,
                 scale: 1,
+                visibility: 'visible',
                 duration: .5,
                 ease: "power2.out"
             });
         });
+
+        // Show plus button again when closing modal
+        plus.style.display = 'block'
+        TweenMax.to(plus, {
+            autoAlpha: 1,
+            duration: .4
+        })
+
+        // Centering now happens during close animation, not here
 
         plus.addEventListener('click', openModalPlus)
         cloneTimeline.kill()
@@ -560,36 +1017,66 @@ $(document).ready(() => {
             height: "100%",
             left: 0,
             top: 0,
-            scale: 1.02,
+            scale: 1,
             duration: .7,
-            ease: "power2.inOut",
-            onReverseComplete: () => {
-                killCloneTimeline()
-            },
+            ease: "power2.out",
             onComplete: () => {
-                // Settle back to normal scale
-                TweenMax.to(cloneImg, {
-                    scale: 1,
-                    duration: .3,
-                    ease: "power2.out"
-                });
-
                 if (track.dataset.canMove === "false") {
-                    FadeInAny(numePersoana, true)
+                    // Hide plus button in modal completely
+                    plus.style.display = 'none'
+                    TweenMax.to(plus, {
+                        autoAlpha: 0,
+                        duration: 0
+                    })
+                    
+                    // Show name with delayed animation (only if no navigation within 200ms)
+                    numePersoana.style.display = 'block'
+                    numePersoana.classList.remove('animate-in') // Reset animation
+                    
+                    // Store timeout ID globally so navigation can cancel it
+                    window.nameAnimationTimeout = setTimeout(() => {
+                        numePersoana.classList.add('animate-in')
+                    }, 200)
+                    
+                    TweenMax.to(numePersoana, {
+                        autoAlpha: 1,
+                        duration: .5
+                    })
                     numePersoana.addEventListener('click', animatieElev)
-                    plus.addEventListener('click', animatieElev)
+                    
                     TweenMax.to('#close-modal', {
                         onStart: () => {
                             closeModalBtn.style.display = 'block'
+                            closeModalBtn.style.zIndex = '10003' // Above slide images
+                            numarJos.style.zIndex = '10003' // Keep numbering above slide images
                         },
-                        autoAlpha: .7,
-                        duration: .8,
+                        autoAlpha: 1,
+                        duration: .5,
                         ease: "power2.out"
                     })
 
                 }
             }
         })
+    }
+    
+    //// Reverse animation with power2.out easing
+    function reverseCloneAnimation(targetWidth, targetHeight, targetLeft, targetTop) {
+        cloneTimeline.kill();
+        cloneTimeline = new TimelineMax();
+        
+        cloneTimeline.to(cloneImg, {
+            width: targetWidth + "px",
+            height: targetHeight + "px",
+            left: targetLeft + "px",
+            top: targetTop + "px",
+            scale: 1,
+            duration: .7,
+            ease: "power2.out",
+            onComplete: () => {
+                killCloneTimeline()
+            }
+        });
     }
 
     //// animatie adaugare text nume
@@ -992,7 +1479,6 @@ $(document).ready(() => {
                     })
                 TweenMax.to('.image', {
                     duration: 1,
-                    filter: 'blur(3px)',
                     ease: 'power4.Out',
                     y: '200%',
                     stagger: { amount: 1 },
@@ -1005,7 +1491,9 @@ $(document).ready(() => {
                     duration: .7,
                     delay: .5,
                     onComplete: () => {
-                        cloneTimeline.reverse();
+                        if (cloneImg.style.width !== '0px') {
+                            reverseCloneAnimation(0, 0, 0, 0);
+                        }
                         containerContact.style.display = 'block'
                         TweenMax.to(containerContact, {
                             autoAlpha: 1,
@@ -1142,40 +1630,8 @@ $(document).ready(() => {
         }
 
         if (track.dataset.lightBox === "true") {
-            track.dataset.lightBox = "false";
-
-            plus.removeEventListener('click', animatieElev)
-            TweenMax.to('#numePersoana', {
-                autoAlpha: 0,
-                duration: .3,
-            })
-            setTimeout(()=> {
-                cloneTimeline.reverse()
-                if (touchSupport) {
-                    TweenMax.to('#next', {
-                        autoAlpha: 1,
-                        duration: .5
-                    })
-                }
-                if (touchSupport) {
-                    TweenMax.to('#prev', {
-                        autoAlpha: 1,
-                        duration: .5
-                    })
-                }
-            },300)
-            setTimeout(()=>{
-
-                TweenMax.to('#checkDiv', {
-                    autoAlpha: 1,
-                    duration: .5
-                })
-            },500)
-            gsap.killTweensOf('#close-modal')
-            TweenMax.to('#close-modal', {
-                autoAlpha: 0,
-                duration: .3,
-            })
+            // Behave exactly like close button
+            closeModalBtn.click()
             return;
         }
         if (track.dataset.canMove === "false") return;
@@ -1272,24 +1728,43 @@ $(document).ready(() => {
         x = Math.max(1, Math.min(CONFIG.TOTAL_IMAGES, x));
     }
 
-    //// cazuri particulare la plus-ul de pe imaginea X pentru Hover
+    //// Modern hover effects for plus button
     plus.addEventListener('mouseover', () => {
-        let FadeInAnimation = TweenMax.to(images[x - 1], {
-            paused: true,
-            autoAlpha: 1,
-            duration: .15,
-            ease: "power4.out",
-        })
-        if (canHover) FadeInAnimation.play()
+        if (canHover && images[x - 1]) {
+            gsap.to(images[x - 1], {
+                autoAlpha: 1,
+                scale: 1.08,
+                y: -10,
+                duration: .35,
+                ease: "power2.out"
+            });
+
+            // Add glow effect to plus button
+            gsap.to(plus, {
+                scale: 1.15,
+                duration: .3,
+                ease: "back.out(2)"
+            });
+        }
     })
+
     plus.addEventListener('mouseleave', () => {
-        let FadeInAnimation = TweenMax.to(images[x - 1], {
-            paused: true,
-            autoAlpha: 1,
-            duration: .15,
-            ease: "power4.out",
-        })
-        if (canHover && curentElem != currentHoverImage) FadeInAnimation.reverse()
+        if (canHover && curentElem != currentHoverImage && images[x - 1]) {
+            gsap.to(images[x - 1], {
+                autoAlpha: 0.8,
+                scale: 1,
+                y: 0,
+                duration: .35,
+                ease: "power2.out"
+            });
+
+            // Reset plus button
+            gsap.to(plus, {
+                scale: 1,
+                duration: .3,
+                ease: "power2.in"
+            });
+        }
     })
 
     //// fucntie deschidere modal pentru plus
@@ -1341,8 +1816,37 @@ $(document).ready(() => {
         numePersoana.removeEventListener('click', animatieElev)
         plus.removeEventListener('click', animatieElev)
         
+        // Hide thumbnail carousel
+        hideThumbnailCarousel()
+        
+        // Hide image navigation
+        hideImageNavigation()
+
+        // Center carousel immediately (hidden behind modal) before closing animation
+        if (targetCenterPosition !== null) {
+            centerCarouselOnPosition(targetCenterPosition);
+        }
+
+        // Wait for carousel to center, then update clone to shrink to center position
         setTimeout(()=> {
-            cloneTimeline.reverse()
+            // Update clone timeline to reverse to CENTER position (where element is now)
+            // Calculate center screen position for the image
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const imageWidth = images[0].offsetWidth; // Use first image as reference
+            const imageHeight = images[0].offsetHeight;
+
+            // Center position on screen
+            const centerLeft = (viewportWidth - imageWidth) / 2;
+            const centerTop = (viewportHeight - imageHeight) / 2;
+
+            // Recreate timeline with center position as the starting point
+            cloneTimeline.kill();
+            cloneTimeline = new TimelineMax({ paused: true });
+
+            // Use the new reverse function with power2.out easing
+            reverseCloneAnimation(imageWidth, imageHeight, centerLeft, centerTop);
+
             if (touchSupport) {
                 TweenMax.to('#next', {
                     autoAlpha: 1,
@@ -1355,19 +1859,22 @@ $(document).ready(() => {
                     duration: .5
                 })
             }
-        },300)
-        setTimeout(()=>{
+        },400) // Give time for carousel to center
 
+        setTimeout(()=>{
             TweenMax.to('#checkDiv', {
                 autoAlpha: 1,
                 duration: .5
             })
             openSpaceModal = true
-        },500)
-        setTimeout(()=> {
+        },700) // Adjusted timing
 
+        setTimeout(()=> {
+            // Clear the target position after modal fully closes
+            targetCenterPosition = null;
+            clickedElement = null;
             modalOpen = false
-        },1000)
+        },1200) // Adjusted timing
     })
 
 
@@ -1446,6 +1953,11 @@ $(document).ready(() => {
         escAnimatieElev = true
         bodyElement.style.overflowY = "visible"
         htmlElement.style.overflow = "visible";
+        
+        // Hide thumbnail carousel when opening student details
+        hideThumbnailCarousel()
+        // Hide image navigation
+        hideImageNavigation()
 
         const elemDespre = document.getElementById(`${cloneImg.dataset.pers}`)
         document.getElementById('titluElev').innerText = numePersoana.innerText
@@ -1547,6 +2059,14 @@ $(document).ready(() => {
 
         spaceModal = true
         despreElev.position = "absolute";
+        
+        // Show thumbnail carousel and navigation when returning to modal
+        if (track.dataset.lightBox === "true") {
+            setTimeout(() => {
+                showThumbnailCarousel(currentCarouselIndex)
+                showImageNavigation()
+            }, 300)
+        }
         
         // Optimized exit animation with reverse stagger
         const exitTl = gsap.timeline({
