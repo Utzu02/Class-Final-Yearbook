@@ -140,6 +140,7 @@ $(document).ready(() => {
     let thumbnailTrack = null
     let thumbnailScrollPosition = 0
     let currentCarouselIndex = 0
+    let slideImageZIndex = 10001  // Track z-index without DOM queries
 
     track.dataset.lightBox = "false"
     track.dataset.percentage = 0;
@@ -169,45 +170,64 @@ $(document).ready(() => {
             const thumb = document.createElement('div')
             thumb.className = 'thumbnail-item'
             thumb.dataset.carouselIndex = i
-            
+
             // Determine actual student ID (1-28)
             const cntValue = images[i].dataset.cnt || images[i].getAttribute('data-cnt')
             let studentId = parseInt(cntValue)
-            
+
             if (isNaN(studentId)) {
                 studentId = (i % CONFIG.STUDENT_COUNT) + 1
             } else if (studentId > CONFIG.STUDENT_COUNT) {
                 studentId = studentId - CONFIG.STUDENT_COUNT
             }
-            
+
             thumb.dataset.studentId = studentId
-            
+
             const img = document.createElement('img')
             img.src = images[i].src
             thumb.appendChild(img)
-            
-            thumb.addEventListener('mouseenter', () => {
-                if (parseInt(thumb.dataset.carouselIndex) !== currentCarouselIndex) {
-                    gsap.to(img, { scale: 1.1, duration: 0.3 })
-                }
-            })
-            thumb.addEventListener('mouseleave', () => {
-                if (parseInt(thumb.dataset.carouselIndex) !== currentCarouselIndex) {
-                    gsap.to(img, { scale: 1, duration: 0.3 })
-                }
-            })
-            thumb.addEventListener('click', function(e) {
-                e.stopPropagation()
-                const thumbElement = this.classList.contains('thumbnail-item') ? this : this.closest('.thumbnail-item')
-                const clickedCarouselIndex = parseInt(thumbElement.dataset.carouselIndex)
-                
-                if (clickedCarouselIndex !== currentCarouselIndex && !isNaN(clickedCarouselIndex)) {
-                    switchToThumbnail(clickedCarouselIndex, 'left')
-                }
-            })
-            
+
             thumbnailTrack.appendChild(thumb)
         }
+
+        // EVENT DELEGATION: Single listeners on parent instead of 165 individual listeners
+        thumbnailTrack.addEventListener('mouseenter', (e) => {
+            const thumb = e.target.closest('.thumbnail-item')
+            if (!thumb) return
+
+            const img = thumb.querySelector('img')
+            const index = parseInt(thumb.dataset.carouselIndex)
+
+            if (index !== currentCarouselIndex) {
+                gsap.killTweensOf(img) // Kill previous animation
+                gsap.to(img, { scale: 1.1, duration: 0.3 })
+            }
+        }, true) // Use capture phase for better performance
+
+        thumbnailTrack.addEventListener('mouseleave', (e) => {
+            const thumb = e.target.closest('.thumbnail-item')
+            if (!thumb) return
+
+            const img = thumb.querySelector('img')
+            const index = parseInt(thumb.dataset.carouselIndex)
+
+            if (index !== currentCarouselIndex) {
+                gsap.killTweensOf(img) // Kill previous animation
+                gsap.to(img, { scale: 1, duration: 0.3 })
+            }
+        }, true) // Use capture phase
+
+        thumbnailTrack.addEventListener('click', (e) => {
+            const thumb = e.target.closest('.thumbnail-item')
+            if (!thumb) return
+
+            e.stopPropagation()
+            const clickedCarouselIndex = parseInt(thumb.dataset.carouselIndex)
+
+            if (clickedCarouselIndex !== currentCarouselIndex && !isNaN(clickedCarouselIndex)) {
+                switchToThumbnail(clickedCarouselIndex, 'left')
+            }
+        })
         
         // Initialize navigation overlays
         initializeImageNavigation()
@@ -237,36 +257,39 @@ $(document).ready(() => {
         })
     }
     
+    //// Helper: Restart CSS animation by toggling class
+    function restartAnimation(element, className) {
+        element.classList.remove(className)
+        void element.offsetWidth // Force reflow
+        element.classList.add(className)
+    }
+    
+    //// Helper: Cancel and reset name animation timeout
+    function cancelNameAnimation() {
+        if (window.nameAnimationTimeout) {
+            clearTimeout(window.nameAnimationTimeout)
+            window.nameAnimationTimeout = null
+        }
+    }
+    
     //// Initialize navigation overlays on main image
     function initializeImageNavigation() {
-        // Get references to existing HTML elements
         const leftImageNav = document.getElementById('image-nav-left')
         const rightImageNav = document.getElementById('image-nav-right')
         
-        // Add event listeners with rotation animation that restarts on each click
         leftImageNav.addEventListener('click', () => {
-            // Restart animation on each click by removing and re-adding class
-            leftImageNav.classList.remove('rotate')
-            void leftImageNav.offsetWidth // Force reflow to restart animation
-            leftImageNav.classList.add('rotate')
+            restartAnimation(leftImageNav, 'rotate')
             navigateStudent('prev')
         })
         rightImageNav.addEventListener('click', () => {
-            // Restart animation on each click by removing and re-adding class
-            rightImageNav.classList.remove('rotate')
-            void rightImageNav.offsetWidth // Force reflow to restart animation
-            rightImageNav.classList.add('rotate')
+            restartAnimation(rightImageNav, 'rotate')
             navigateStudent('next')
         })
     }
     
     //// Navigate to previous or next student
     function navigateStudent(direction) {
-        // Cancel name animation if navigation happens within 200ms
-        if (window.nameAnimationTimeout) {
-            clearTimeout(window.nameAnimationTimeout)
-            window.nameAnimationTimeout = null
-        }
+        cancelNameAnimation()
         
         let newIndex
         let slideDirection
@@ -333,42 +356,50 @@ $(document).ready(() => {
             }
         })
         
-        // Don't clean up existing animations - let them stack when clicking rapidly
-        
+        // STACKING LOGIC: Intentional stacking for visual effect, but optimized
+        // Get all existing slide images ONCE
+        const existingSlides = Array.from(document.querySelectorAll('[id^="clone-image-next"]'))
+
+        // Limit to 4 slides (will become 5 after we add the new one)
+        while (existingSlides.length > 4) {
+            // Remove oldest slides (from beginning of array)
+            const oldestSlide = existingSlides.shift() // Remove from array and get reference
+            gsap.killTweensOf(oldestSlide)
+            if (oldestSlide.parentNode) {
+                oldestSlide.remove()
+            }
+        }
+
         // Create a second image element for smooth sliding
         const nextImg = document.createElement('img')
         nextImg.id = 'clone-image-next'
         nextImg.src = targetImage.src
-        
-        // Calculate z-index for stacking - count existing slide images
-        const existingSlides = document.querySelectorAll('[id^="clone-image-"]')
-        const zIndex = 10000 + existingSlides.length + 1
-        
-        nextImg.style.cssText = `
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: ${zIndex};
-            will-change: transform;
-        `
-        
+
+        // Calculate z-index for stacking - use efficient counter
+        const zIndex = slideImageZIndex++
+
+        // Use CSS class for static styles, inline for dynamic z-index
+        nextImg.className = 'slide-image'
+        nextImg.style.zIndex = zIndex
+
         // Position next image off-screen for full slide animation
         const slideFrom = direction === 'left' ? window.innerWidth : -window.innerWidth
         const slideTo = direction === 'left' ? -window.innerWidth : window.innerWidth
-        
+
         // Set initial position and add to DOM
-        gsap.set(nextImg, { 
+        gsap.set(nextImg, {
             x: slideFrom,
             force3D: true
         })
-        
+
         document.body.appendChild(nextImg)
-        
-        // Slide the previous image out (could be cloneImg or a previous nextImg)
+
+        // Slide the previous image out (the last one in the array, or cloneImg if no slides)
         const currentTopImage = existingSlides.length > 0 ? existingSlides[existingSlides.length - 1] : cloneImg
+
+        // Kill any existing animations on the current top image only (others keep animating for stacking effect)
+        gsap.killTweensOf(currentTopImage)
+
         gsap.to(currentTopImage, {
             x: slideTo,
             duration: 0.45,
@@ -408,19 +439,11 @@ $(document).ready(() => {
         
         // Reset name to initial state before updating text
         numePersoana.classList.remove('animate-in')
-        gsap.set(numePersoana, {
-            opacity: 0,
-            y: '50px',
-            clearProps: 'transform'
-        })
-        
-        // Update name text
+        gsap.set(numePersoana, { opacity: 0, y: 50 })
         numePersoana.innerText = targetImage.dataset.text
         
-        // Restart animation timeout for new name
-        if (window.nameAnimationTimeout) {
-            clearTimeout(window.nameAnimationTimeout)
-        }
+        // Schedule animation after 200ms of no navigation
+        cancelNameAnimation()
         window.nameAnimationTimeout = setTimeout(() => {
             numePersoana.classList.add('animate-in')
         }, 200)
@@ -430,8 +453,9 @@ $(document).ready(() => {
         
         // Calculate student ID for the number display (1-28)
         const displayStudentId = studentId > CONFIG.STUDENT_COUNT ? studentId - CONFIG.STUDENT_COUNT : studentId
-        
+
         // Update student number
+        gsap.killTweensOf(numarImagine) // Kill previous animation
         TweenMax.to(numarImagine, {
             y: -numarImagine.children[CONFIG.STUDENT_COUNT].offsetHeight * (displayStudentId - 1) + "px",
             duration: .4,
@@ -451,7 +475,8 @@ $(document).ready(() => {
         const maxScroll = Math.max(0, (images.length - visibleCount) * thumbWidth)
         
         thumbnailScrollPosition = Math.max(0, Math.min(maxScroll, targetPosition))
-        
+
+        gsap.killTweensOf(thumbnailTrack) // Kill previous animation
         gsap.to(thumbnailTrack, {
             x: -thumbnailScrollPosition,
             duration: 0.4,
@@ -1009,15 +1034,11 @@ $(document).ready(() => {
         track.dataset.prevPercentage = track.dataset.percentage;
         cloneTimeline = new TimelineMax({ paused: true })
 
-        // Add subtle scale effect during expansion
-        TweenMax.set(cloneImg, { scale: 1, transformOrigin: "center center" });
-
         cloneTimeline.to(cloneImg, {
-            width: "100%",
-            height: "100%",
-            left: 0,
-            top: 0,
-            scale: 1,
+            width: window.innerWidth + "px",
+            height: window.innerHeight + "px",
+            left: "0px",
+            top: "0px",
             duration: .7,
             ease: "power2.out",
             onComplete: () => {
@@ -1028,22 +1049,22 @@ $(document).ready(() => {
                         autoAlpha: 0,
                         duration: 0
                     })
-                    
+
                     // Show name with delayed animation (only if no navigation within 200ms)
                     numePersoana.style.display = 'block'
                     numePersoana.classList.remove('animate-in') // Reset animation
-                    
+
                     // Store timeout ID globally so navigation can cancel it
                     window.nameAnimationTimeout = setTimeout(() => {
                         numePersoana.classList.add('animate-in')
                     }, 200)
-                    
+
                     TweenMax.to(numePersoana, {
                         autoAlpha: 1,
                         duration: .5
                     })
                     numePersoana.addEventListener('click', animatieElev)
-                    
+
                     TweenMax.to('#close-modal', {
                         onStart: () => {
                             closeModalBtn.style.display = 'block'
@@ -1064,13 +1085,12 @@ $(document).ready(() => {
     function reverseCloneAnimation(targetWidth, targetHeight, targetLeft, targetTop) {
         cloneTimeline.kill();
         cloneTimeline = new TimelineMax();
-        
+
         cloneTimeline.to(cloneImg, {
             width: targetWidth + "px",
             height: targetHeight + "px",
             left: targetLeft + "px",
             top: targetTop + "px",
-            scale: 1,
             duration: .7,
             ease: "power2.out",
             onComplete: () => {
@@ -1592,21 +1612,11 @@ $(document).ready(() => {
             }, { duration: 150, fill: "forwards" });
         });
 
-        // Immediate position update for real-time feedback
-        cautBin();
-        let studentNum = getStudentNumber(x);
-        TweenMax.to(numarImagine, {
-            y: -numarImagine.children[CONFIG.STUDENT_COUNT].offsetHeight * (studentNum - 1) + "px",
-            duration: .3,
-            ease: "power4.InOut",
-        })
-        lastX = x;
-
         // Clear any existing pending update
         if (pendingPositionUpdate) {
             clearTimeout(pendingPositionUpdate);
         }
-        // Schedule secondary position update for accuracy
+        // Schedule debounced position update (removed immediate call for performance)
         pendingPositionUpdate = setTimeout(() => {
             cautBin();
             let studentNum2 = getStudentNumber(x);
@@ -1661,22 +1671,13 @@ $(document).ready(() => {
             }, { duration: 150, fill: "forwards" });
         });
 
-        // Immediate position update
-        cautBin();
-        let studentNum = getStudentNumber(x);
-        TweenMax.to(numarImagine, {
-            y: -numarImagine.children[CONFIG.STUDENT_COUNT].offsetHeight * (studentNum - 1) + "px",
-            duration: .3,
-            ease: "power4.InOut",
-        })
-        lastX = x;
         track.dataset.prevPercentage = track.dataset.percentage;
 
         // Clear any existing pending update
         if (pendingPositionUpdate) {
             clearTimeout(pendingPositionUpdate);
         }
-        // Debounce secondary position update
+        // Debounced position update (removed immediate call for performance)
         pendingPositionUpdate = setTimeout(() => {
             cautBin();
             let studentNum2 = getStudentNumber(x);
@@ -1706,23 +1707,33 @@ $(document).ready(() => {
         // Don't recalculate position if we're in the middle of a click animation
         if (isAnimatingCarousel) return;
 
+        // BATCH ALL DOM READS FIRST (eliminate layout thrashing)
         var elementDim = document.getElementById('element').getBoundingClientRect();
-        var left = 0, right = CONFIG.TOTAL_IMAGES - 1
-        var image
-        x = -1
+        const imageElements = document.getElementsByClassName('image');
+        const imageRects = [];
+
+        // Cache all getBoundingClientRect() calls in one pass
+        for (let i = 0; i < CONFIG.TOTAL_IMAGES; i++) {
+            imageRects[i] = imageElements[i].getBoundingClientRect();
+        }
+
+        // THEN DO BINARY SEARCH ON CACHED DATA (no more DOM reads in loop)
+        var left = 0, right = CONFIG.TOTAL_IMAGES - 1;
+        x = -1;
+
         while (left <= right) {
-            var mijl = Math.floor((left + right) / 2)
-            image = document.getElementsByClassName('image')[mijl]
-            var imageDim = image.getBoundingClientRect();
+            var mijl = Math.floor((left + right) / 2);
+            var imageDim = imageRects[mijl]; // Use cached rect instead of DOM query
+
             if (elementDim.left + elementDim.width <= imageDim.left + imageDim.width && elementDim.left >= imageDim.left) {
                 left = right + 1;
-                x = mijl + 1
+                x = mijl + 1;
             }
             else if (elementDim.left > imageDim.left + imageDim.width)
-                left = mijl + 1
-            else right = mijl - 1
+                left = mijl + 1;
+            else right = mijl - 1;
         }
-        if (x === -1) x = left + 1
+        if (x === -1) x = left + 1;
 
         // Safety: Ensure x is always within valid bounds
         x = Math.max(1, Math.min(CONFIG.TOTAL_IMAGES, x));
@@ -1731,6 +1742,7 @@ $(document).ready(() => {
     //// Modern hover effects for plus button
     plus.addEventListener('mouseover', () => {
         if (canHover && images[x - 1]) {
+            gsap.killTweensOf(images[x - 1]) // Kill previous animation
             gsap.to(images[x - 1], {
                 autoAlpha: 1,
                 scale: 1.08,
@@ -1740,6 +1752,7 @@ $(document).ready(() => {
             });
 
             // Add glow effect to plus button
+            gsap.killTweensOf(plus) // Kill previous animation
             gsap.to(plus, {
                 scale: 1.15,
                 duration: .3,
@@ -1750,6 +1763,7 @@ $(document).ready(() => {
 
     plus.addEventListener('mouseleave', () => {
         if (canHover && curentElem != currentHoverImage && images[x - 1]) {
+            gsap.killTweensOf(images[x - 1]) // Kill previous animation
             gsap.to(images[x - 1], {
                 autoAlpha: 0.8,
                 scale: 1,
@@ -1759,6 +1773,7 @@ $(document).ready(() => {
             });
 
             // Reset plus button
+            gsap.killTweensOf(plus) // Kill previous animation
             gsap.to(plus, {
                 scale: 1,
                 duration: .3,
@@ -1804,6 +1819,16 @@ $(document).ready(() => {
     //// functie inchidere modal
     let openSpaceModal = false
     closeModalBtn.addEventListener('click', () => {
+        // Clean up all slide images when modal closes
+        const slideImages = document.querySelectorAll('[id^="clone-image-next"]')
+        slideImages.forEach(img => {
+            gsap.killTweensOf(img)
+            img.remove()
+        })
+
+        // Reset z-index counter
+        slideImageZIndex = 10001
+
         gsap.killTweensOf('#close-modal')
         TweenMax.to('#close-modal', {
             autoAlpha: 0,
@@ -1815,10 +1840,10 @@ $(document).ready(() => {
         })
         numePersoana.removeEventListener('click', animatieElev)
         plus.removeEventListener('click', animatieElev)
-        
+
         // Hide thumbnail carousel
         hideThumbnailCarousel()
-        
+
         // Hide image navigation
         hideImageNavigation()
 

@@ -38,6 +38,19 @@
   overflow: hidden !important;
 }
 
+/* Slide image class for optimized thumbnail switching */
+.slide-image {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
 @font-face {
   font-family: fontElevi;
   src: url(fonts/ClashGrotesk-Bold.woff2);
@@ -97,6 +110,7 @@ body {
           backface-visibility: hidden;
   -webkit-transform: translateZ(0);
           transform: translateZ(0);
+  will-change: opacity, transform;
 }
 .image:hover {
   cursor: pointer;
@@ -177,6 +191,8 @@ body {
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   -webkit-filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.1));
           filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.1));
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 #element:hover {
   cursor: pointer;
@@ -198,7 +214,7 @@ body {
   transform: translateY(-50%);
   -ms-transform: translateY(-50%);
   -webkit-transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.75);
   border-radius: 8px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -211,8 +227,7 @@ body {
           justify-content: center;
   -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  -webkit-backdrop-filter: blur(8px);
-          backdrop-filter: blur(8px);
+  will-change: transform, opacity;
   -webkit-transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   -o-transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -248,7 +263,7 @@ body {
   transform: translateY(-50%);
   -ms-transform: translateY(-50%);
   -webkit-transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.75);
   -webkit-transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   -o-transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -264,8 +279,7 @@ body {
           justify-content: center;
   -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  -webkit-backdrop-filter: blur(8px);
-          backdrop-filter: blur(8px);
+  will-change: transform, opacity;
   -webkit-transition: all 0.3s ease;
   -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
@@ -450,6 +464,7 @@ body {
      object-fit: cover;
   -o-object-position: 50% 50%;
      object-position: 50% 50%;
+  will-change: width, height, left, top, opacity;
 }
 #clone-image-despre {
   position: fixed;
@@ -495,6 +510,8 @@ body {
       -ms-user-select: none;
           user-select: none;
   cursor: pointer;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
   font-weight: 500;
   text-shadow: 2px 2px 4px #000000;
   letter-spacing: 4px;
@@ -837,8 +854,7 @@ body {
 #thumb-scroll-right {
   width: 32px;
   height: 32px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -849,6 +865,7 @@ body {
   transition: all 0.3s ease;
   user-select: none;
   flex-shrink: 0;
+  will-change: transform;
 }
 
 #thumb-scroll-left:hover,
@@ -863,8 +880,7 @@ body {
   overflow: hidden;
   position: relative;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.75);
   padding: 8px;
   pointer-events: auto;
 }
@@ -903,6 +919,8 @@ body {
   object-fit: cover;
   object-position: center top;
   transition: transform 0.3s ease;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .thumbnail-item:hover img {
@@ -917,8 +935,7 @@ body {
   transform: translateY(-50%);
   width: 60px;
   height: 60px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 50%;
   display: none;
   align-items: center;
@@ -931,6 +948,7 @@ body {
   user-select: none;
   opacity: 0;
   transition: all 0.3s ease;
+  will-change: transform, opacity;
 }
 
 #image-nav-left {
