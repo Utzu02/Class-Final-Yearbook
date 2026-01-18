@@ -28,19 +28,33 @@
             <input type="checkbox" draggable="false" id="checkboxSageti">
             <p>Enable Arrows</p>
         </div>
-        <div id="next"><img src="style/imagstyle/next.png" draggable="false"></div>
-        <div id="prev"><img src="style/imagstyle/prev.png" draggable="false"></div>
+        <div id="next">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 18l6-6-6-6" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    fill="none" />
+            </svg>
+        </div>
+        <div id="prev">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18l-6-6 6-6" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" fill="none" />
+            </svg>
+        </div>
         <div id="element">
-            <svg enable-background="new 0 0 50 50" height="50px" id="Layer_1" version="1.1" viewBox="0 0 50 50"
-                width="50px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+            <svg enable-background="new 0 0 50 50" height="36px" id="Layer_1" version="1.1" viewBox="0 0 50 50"
+                width="36px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink">
                 <rect fill="none" height="50" width="50" />
-                <line fill="none" stroke="#ffffff " stroke-miterlimit="10" stroke-width="1.5" x1="9" x2="41" y1="25"
+                <line fill="none" stroke="#ffffff" stroke-miterlimit="10" stroke-width="1.5" x1="9" x2="41" y1="25"
                     y2="25" />
                 <line fill="none" stroke="#ffffff" stroke-miterlimit="10" stroke-width="1.5" x1="25" x2="25" y1="9"
                     y2="41" />
             </svg>
         </div>
+        <!-- Student Carousel Images
+             Structure: 28 original students (indices 0-27) + 27 duplicates (indices 28-54)
+             Total: 55 images for seamless infinite scroll effect in carousel
+             Duplicates enable smooth wrapping when scrolling past the end/beginning -->
         <div id="image-container" data-mouse-down-at="0" data-prev-percentage="0" data-can-move=false>
             <img class="image" data-src="imagini/achim2.webp" data-pers="achim" data-text="Achim Andrei-Eduard"
                 src="imagini/achim.webp" data-unmin="imagini/achim.webp" draggable="false" />
@@ -418,45 +432,62 @@
         <p id="maimulte">Despre</p>
         <p id="numePersoana"></p>
         <div id="despreElev">
-            <img id="iesireSectiune" src="imagini/leftarrow.png">
-            <h1 id="titluElev">Bala Mihai</h1>
-            <div class="flex" id="flexelevi" style="margin-top: 5%;">
 
-                <div id="elevscris">
-                    <p id="p1">
-                        Nu cred că pot spune ceva concret despre mine; anii de liceu m-au schimbat în permanență.
-                        Totuși, un lucru e sigur. Mereu mi-am dorit să avem un colectiv frumos și unit și vreau să cred
-                        că prezența mea a avut o contribuție cât de mică la formarea acestuia. Au fost patru ani
-                        deosebiți - cu bune și cu rele; patru ani în care am întâlnit multe persoane minunate, de la
-                        care am avut de învățat și alături de care m-am maturizat.
-                    </p>
+
+            <div id="despreContainer">
+                <!-- Left Sidebar -->
+                <div id="despreSidebar">
+                    <div id="sidebarContent">
+                        <img id="pozaelev" src="imagini/bala.webp">
+                        <div class="siderbarinfo">
+                            <h1 id="titluElev">Zamfiroiu<br>Bogdan-<br>Marian</h1>
+                            <p id="despreJos">Clasa a XII-A</p>
+                        </div>
+                        <iframe id="melodiePref"
+                            src="https://open.spotify.com/embed/track/0zMS7Z2j0Z8gyuEHQYpYcC?utm_source=generator&theme=0"
+                            frameBorder="0" allowfullscreen=""
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                            loading="lazy"></iframe>
+                    </div>
                 </div>
-                <div id="elevpoza">
-                    <img id="pozaelev" src="imagini/bala.webp">
+
+                <!-- Right Content Area -->
+                <div id="despreContent">
+                    <div id="iesireSectiune">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 12H5M12 19l-7-7 7-7" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" fill="none" />
+                        </svg>
+                    </div>
+                    <div id="contentScroll">
+                        <p id="p1">
+                            Nu cred că pot spune ceva concret despre mine; anii de liceu m-au schimbat în permanență.
+                            Totuși, un lucru e sigur. Mereu mi-am dorit să avem un colectiv frumos și unit și vreau să
+                            cred
+                            că prezența mea a avut o contribuție cât de mică la formarea acestuia. Au fost patru ani
+                            deosebiți - cu bune și cu rele; patru ani în care am întâlnit multe persoane minunate, de la
+                            care am avut de învățat și alături de care m-am maturizat.
+                        </p>
+
+                        <div class="contentImages">
+                            <img id="pozaelev2" src="imagini/bala.webp">
+                        </div>
+
+                        <p id="p2">
+                            Când vine vorba de amintiri, sunt nenumărate momentele care încă îmi dau fiori când îmi trec
+                            prin gând. Nu mi-aș fi imaginat anii de liceu atât de plini de emoție. Îmi voi aduce aminte
+                            mereu cu drag de plimbările seară de seară din clasa a IX-a, experiențele și trăirile cu
+                            echipa
+                            de robotica din clasa a X-a, primele majorate din clasa a XI-a și eforturile din clasa
+                            terminală. Nu pot spune că îmi pare rău că am ajuns la final; a venit momentul ca această
+                            etapă
+                            să se termine și noi toți să ne urmăm traseul format.
+                        </p>
+
+                        <p id="citat">~ "Lorem Ipsum"</p>
+                    </div>
                 </div>
             </div>
-            <div class="flex" id="flexelevi" style="margin-top: 5%;">
-                <div id="elevpoza">
-                    <img id="pozaelev2" src="imagini/bala.webp">
-                </div>
-                <div id="elevscris">
-                    <p id="p2">
-                        Când vine vorba de amintiri, sunt nenumărate momentele care încă îmi dau fiori când îmi trec
-                        prin gând. Nu mi-aș fi imaginat anii de liceu atât de plini de emoție. Îmi voi aduce aminte
-                        mereu cu drag de plimbările seară de seară din clasa a IX-a, experiențele și trăirile cu echipa
-                        de robotica din clasa a X-a, primele majorate din clasa a XI-a și eforturile din clasa
-                        terminală. Nu pot spune că îmi pare rău că am ajuns la final; a venit momentul ca această etapă
-                        să se termine și noi toți să ne urmăm traseul format.
-                    </p>
-                </div>
-            </div>
-            <iframe style="border-radius:12px" id="melodiePref"
-                src="https://open.spotify.com/embed/track/0zMS7Z2j0Z8gyuEHQYpYcC?utm_source=generator&theme=0"
-                width="50%" height="152" frameBorder="0" allowfullscreen=""
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"></iframe>
-            <p id="citat">~ "Lorem Ipsum"</p>
-            <p id="despreJos">XII-A</p>
         </div>
         <div id="numarjos">
             <span id="numarimagine">
@@ -600,7 +631,7 @@
                         <img class="row-17" src="imagini/62.webp">
                     </a>
                 </div>
-                
+
                 <div class="item">
                     <a href="imagini/65.webp" data-lightbox="galerie">
                         <img class="row-18" src="imagini/65.webp">
@@ -879,13 +910,14 @@
                 <div class="flex echipacontainter">
                     <div class="membru">
                         <img class="flexitemm" src="imagini/utzu.webp">
-                        <p class="textContact">Tudorescu Ioan Daniel</p>
+                    </div>
+                    <div class="textmembru">
+                        <p class="textContact" id="utzu">Tudorescu Ioan Daniel</p>
+                        <p class="textContact" id="laura">Dolofan Laura-Elena</p>
                     </div>
                     <div class="membru">
                         <img class="flexitemm" src="imagini/laura.webp">
-                        <p class="textContact">Dolofan Laura-Elena</p>
                     </div>
-
                 </div>
             </div>
             <p class="textContact">Unitate școlară: Colegiul Național „Tudor Vladimirescu”</p>
