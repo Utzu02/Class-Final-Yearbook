@@ -8,7 +8,7 @@
 /* Keyframe Animations */
 @keyframes slideUpName {
   from {
-    transform: translate(-50%, calc(-50% + 50px));
+    transform: translate(-50%, calc(-50% + 30px));
     opacity: 0;
   }
   to {
@@ -23,6 +23,15 @@
   }
   100% {
     transform: translateY(-50%) rotate(90deg);
+  }
+}
+
+@keyframes rotateThumbnailButton {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(90deg);
   }
 }
 
@@ -500,6 +509,7 @@ body {
   top: 50%;
   color: rgb(255, 255, 255);
   font-size: 2.7rem;
+  text-align: center;
   display: none;
   opacity: 0;
   transform: translate(-50%, calc(-50% + 50px));
@@ -520,7 +530,7 @@ body {
 }
 
 #numePersoana.animate-in {
-  animation: slideUpName 0.4s ease-out forwards;
+  animation: slideUpName 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 #maimulte {
@@ -552,9 +562,6 @@ body {
   opacity: 1;
   color: antiquewhite;
   cursor: pointer;
-}
-#numePersoana:hover {
-  color: antiquewhite;
 }
 
 #imagineClasa {
@@ -835,27 +842,25 @@ body {
   cursor: pointer;
 }
 
-/* Thumbnail Carousel */
 #thumbnail-carousel {
   position: fixed;
   bottom: 20px;
   right: 20px;
   width: 700px;
-  height: 80px;
+  height: 52px;
   display: none;
   align-items: center;
-  gap: 8px;
+  gap: 0px;
   z-index: 10101;
   opacity: 0;
   pointer-events: auto;
+  will-change: transform, opacity;
 }
 
 #thumb-scroll-left,
 #thumb-scroll-right {
   width: 32px;
   height: 32px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -868,10 +873,9 @@ body {
   will-change: transform;
 }
 
-#thumb-scroll-left:hover,
-#thumb-scroll-right:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.2);
+#thumb-scroll-left.rotate,
+#thumb-scroll-right.rotate {
+  animation: rotateThumbnailButton 0.3s ease-out;
 }
 
 #thumbnail-container {
@@ -880,37 +884,31 @@ body {
   overflow: hidden;
   position: relative;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.75);
-  padding: 8px;
+  padding: 0px;
   pointer-events: auto;
 }
 
 #thumbnail-track {
   display: flex;
-  gap: 8px;
+  gap: 0px;
   height: 100%;
+  will-change: transform;
 }
 
 .thumbnail-item {
-  width: 64px;
-  height: 100%;
+  width: 89px;
+  aspect-ratio: 16 / 9;
+  box-sizing: border-box;
   flex-shrink: 0;
   cursor: pointer;
-  border-radius: 6px;
   overflow: hidden;
   border: 2px solid transparent;
-  transition: all 0.3s ease;
   position: relative;
   pointer-events: auto;
 }
 
-.thumbnail-item:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
 .thumbnail-item.active {
   border-color: rgba(255, 255, 255, 0.9);
-  transform: scale(1.05);
 }
 
 .thumbnail-item img {
@@ -923,10 +921,6 @@ body {
   backface-visibility: hidden;
 }
 
-.thumbnail-item:hover img {
-  transform: scale(1.1);
-}
-
 /* Image Navigation Buttons */
 #image-nav-left,
 #image-nav-right {
@@ -935,7 +929,6 @@ body {
   transform: translateY(-50%);
   width: 60px;
   height: 60px;
-  background: rgba(0, 0, 0, 0.7);
   border-radius: 50%;
   display: none;
   align-items: center;
@@ -957,12 +950,6 @@ body {
 
 #image-nav-right {
   right: 60px;
-}
-
-#image-nav-left:hover,
-#image-nav-right:hover {
-  transform: translateY(-50%) scale(1.15);
-  background: rgba(255, 255, 255, 0.15);
 }
 
 #image-nav-left.rotate,

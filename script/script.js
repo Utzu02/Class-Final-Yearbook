@@ -141,6 +141,8 @@ $(document).ready(() => {
     let thumbnailScrollPosition = 0
     let currentCarouselIndex = 0
     let slideImageZIndex = 10001  // Track z-index without DOM queries
+    let thumbnailItems = []  // Cache for thumbnail elements
+    let activeThumb = null  // Track currently active thumbnail
 
     track.dataset.lightBox = "false"
     track.dataset.percentage = 0;
@@ -162,8 +164,14 @@ $(document).ready(() => {
         const rightScroll = document.getElementById('thumb-scroll-right')
         
         // Add event listeners for scroll arrows
-        leftScroll.addEventListener('click', () => scrollThumbnailsHorizontal('left'))
-        rightScroll.addEventListener('click', () => scrollThumbnailsHorizontal('right'))
+        leftScroll.addEventListener('click', () => {
+            restartAnimation(leftScroll, 'rotate')
+            scrollThumbnailsHorizontal('left')
+        })
+        rightScroll.addEventListener('click', () => {
+            restartAnimation(rightScroll, 'rotate')
+            scrollThumbnailsHorizontal('right')
+        })
         
         // Populate thumbnails with ALL carousel images (including duplicates)
         for (let i = 0; i < images.length; i++) {
@@ -188,6 +196,7 @@ $(document).ready(() => {
             thumb.appendChild(img)
 
             thumbnailTrack.appendChild(thumb)
+            thumbnailItems.push(thumb)  // Cache for performance
         }
 
         // EVENT DELEGATION: Single listeners on parent instead of 165 individual listeners
@@ -235,9 +244,9 @@ $(document).ready(() => {
     
     //// Scroll thumbnails horizontally
     function scrollThumbnailsHorizontal(direction) {
-        const thumbWidth = 72 // 64px + 8px gap
+        const thumbWidth = 89 // 89px width with 0px gap
         const scrollAmount = thumbWidth * 3 // Scroll 3 items at a time
-        const containerWidth = thumbnailContainer.offsetWidth - 16 // Account for padding
+        const containerWidth = thumbnailContainer.offsetWidth // No padding to account for
         const visibleCount = Math.floor(containerWidth / thumbWidth)
         // Calculate total width needed for all thumbnails
         const totalWidth = images.length * thumbWidth
@@ -346,15 +355,14 @@ $(document).ready(() => {
             studentId = studentId - CONFIG.STUDENT_COUNT
         }
         
-        // Update active thumbnail styling - highlight the clicked carousel position
-        document.querySelectorAll('.thumbnail-item').forEach((thumb) => {
-            const thumbCarouselIndex = parseInt(thumb.dataset.carouselIndex)
-            if (thumbCarouselIndex === carouselIndex) {
-                thumb.classList.add('active')
-            } else {
-                thumb.classList.remove('active')
-            }
-        })
+        // Optimized: Update active thumbnail using cached reference
+        if (activeThumb) {
+            activeThumb.classList.remove('active')
+        }
+        activeThumb = thumbnailItems[carouselIndex]
+        if (activeThumb) {
+            activeThumb.classList.add('active')
+        }
         
         // STACKING LOGIC: Intentional stacking for visual effect, but optimized
         // Get all existing slide images ONCE
@@ -439,9 +447,9 @@ $(document).ready(() => {
         
         // Reset name to initial state before updating text
         numePersoana.classList.remove('animate-in')
-        gsap.set(numePersoana, { opacity: 0, y: 50 })
+        gsap.set(numePersoana, { opacity: 0, visibility: 'visible' })
         numePersoana.innerText = targetImage.dataset.text
-        
+
         // Schedule animation after 200ms of no navigation
         cancelNameAnimation()
         window.nameAnimationTimeout = setTimeout(() => {
@@ -468,9 +476,9 @@ $(document).ready(() => {
     
     //// Center active thumbnail in view
     function centerActiveThumbnail(carouselIndex) {
-        const thumbWidth = 72 // 64px + 8px gap
+        const thumbWidth = 89 // 89px width with 0px gap
         const containerWidth = thumbnailContainer.offsetWidth
-        const visibleCount = 8 // Show 8 items at a time
+        const visibleCount = Math.floor(containerWidth / thumbWidth) // Calculate dynamically
         const targetPosition = carouselIndex * thumbWidth - (containerWidth / 2) + (thumbWidth / 2)
         const maxScroll = Math.max(0, (images.length - visibleCount) * thumbWidth)
         
@@ -487,30 +495,37 @@ $(document).ready(() => {
     //// Show thumbnail carousel
     function showThumbnailCarousel(activeCarouselIndex) {
         currentCarouselIndex = activeCarouselIndex
-        thumbnailScrollPosition = 0
-        
-        // Reset and show carousel
+
+        // Reset and show carousel (opacity still 0)
         thumbnailCarousel.style.display = 'flex'
-        gsap.set(thumbnailTrack, { x: 0 })
-        
-        // Update active thumbnail - highlight the specific carousel position
-        document.querySelectorAll('.thumbnail-item').forEach((thumb) => {
-            const thumbCarouselIndex = parseInt(thumb.dataset.carouselIndex)
-            if (thumbCarouselIndex === activeCarouselIndex) {
-                thumb.classList.add('active')
-            } else {
-                thumb.classList.remove('active')
-            }
-        })
-        
-        // Animate in
+
+        // Optimized: Remove active class from previous thumb only (if exists)
+        if (activeThumb) {
+            activeThumb.classList.remove('active')
+        }
+
+        // Add active class to new thumb using cached array
+        activeThumb = thumbnailItems[activeCarouselIndex]
+        if (activeThumb) {
+            activeThumb.classList.add('active')
+        }
+
+        // Calculate centered position BEFORE showing
+        const thumbWidth = 89
+        const containerWidth = thumbnailContainer.offsetWidth
+        const visibleCount = Math.floor(containerWidth / thumbWidth)
+        const targetPosition = activeCarouselIndex * thumbWidth - (containerWidth / 2) + (thumbWidth / 2)
+        const maxScroll = Math.max(0, (images.length - visibleCount) * thumbWidth)
+        thumbnailScrollPosition = Math.max(0, Math.min(maxScroll, targetPosition))
+
+        // Set position immediately (no animation) so it's already centered when it appears
+        gsap.set(thumbnailTrack, { x: -thumbnailScrollPosition })
+
+        // Animate in immediately (already delayed by setTimeout in caller)
         gsap.fromTo(thumbnailCarousel,
-            { x: 50, autoAlpha: 0 },
-            { x: 0, autoAlpha: 1, duration: 0.5, delay: 0.4, ease: 'power2.out' }
+            { x: 30, autoAlpha: 0 },
+            { x: 0, autoAlpha: 1, duration: 1, ease: 'power2.out' }
         )
-        
-        // Center active thumbnail
-        setTimeout(() => centerActiveThumbnail(activeCarouselIndex), 100)
     }
     
     //// Show image navigation overlays
@@ -909,15 +924,15 @@ $(document).ready(() => {
             cloneTimeline.play();
             bodyElement.style.pointerEvents = "auto"
             htmlElement.style.pointerEvents = "auto";
-            
+
             // Set the name from the clicked element
             numePersoana.innerText = element.dataset.text
-            
-            // Show thumbnail carousel with the actual carousel position clicked
-            showThumbnailCarousel(clickedPosition - 1)
-            
-            // Show image navigation
-            showImageNavigation()
+
+            // Delay thumbnail carousel until after modal opening animation (0.9s total)
+            setTimeout(() => {
+                showThumbnailCarousel(clickedPosition - 1)
+                showImageNavigation()
+            }, 700)
 
     }
 
@@ -1053,16 +1068,12 @@ $(document).ready(() => {
                     // Show name with delayed animation (only if no navigation within 200ms)
                     numePersoana.style.display = 'block'
                     numePersoana.classList.remove('animate-in') // Reset animation
+                    gsap.set(numePersoana, { opacity: 0, visibility: 'visible' })
 
                     // Store timeout ID globally so navigation can cancel it
                     window.nameAnimationTimeout = setTimeout(() => {
                         numePersoana.classList.add('animate-in')
                     }, 200)
-
-                    TweenMax.to(numePersoana, {
-                        autoAlpha: 1,
-                        duration: .5
-                    })
                     numePersoana.addEventListener('click', animatieElev)
 
                     TweenMax.to('#close-modal', {
