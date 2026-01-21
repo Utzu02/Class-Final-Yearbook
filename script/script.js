@@ -140,9 +140,10 @@ $(document).ready(() => {
     let thumbnailTrack = null
     let thumbnailScrollPosition = 0
     let currentCarouselIndex = 0
-    let slideImageZIndex = 10001  // Track z-index without DOM queries
     let thumbnailItems = []  // Cache for thumbnail elements
     let activeThumb = null  // Track currently active thumbnail
+    let wheelNavigationTimeout = null  // Debounce timer for modal wheel navigation
+    let wheelAccumulator = 0  // Accumulate wheel delta to prevent accidental navigation
 
     track.dataset.lightBox = "false"
     track.dataset.percentage = 0;
@@ -383,12 +384,9 @@ $(document).ready(() => {
         nextImg.id = 'clone-image-next'
         nextImg.src = targetImage.src
 
-        // Calculate z-index for stacking - use efficient counter
-        const zIndex = slideImageZIndex++
-
         // Use CSS class for static styles, inline for dynamic z-index
         nextImg.className = 'slide-image'
-        nextImg.style.zIndex = zIndex
+        nextImg.style.zIndex = 1
 
         // Position next image off-screen for full slide animation
         const slideFrom = direction === 'left' ? window.innerWidth : -window.innerWidth
@@ -571,6 +569,8 @@ $(document).ready(() => {
             ease: 'power2.in',
             onComplete: () => {
                 thumbnailCarousel.style.display = 'none'
+                thumbnailScrollPosition = 0  // Reset scroll position
+                gsap.set(thumbnailTrack, { x: 0 })  // Reset track position
             }
         })
     }
@@ -807,11 +807,12 @@ $(document).ready(() => {
         evt = evt || window.event;
         if (evt.keyCode === 27 || evt.keyCode === 8) {
             if (escModal) {
+                evt.preventDefault(); // Prevent backspace browser navigation
                 closeModalBtn.click()
-                escModal = false
-                spaceModal = false
+                // Let close handler manage flag resets
             }
             else if (escAnimatieElev) {
+                evt.preventDefault(); // Prevent backspace browser navigation
                 iesireanimatieelev()
                 escAnimatieElev = false
                 escModal = true
@@ -835,6 +836,7 @@ $(document).ready(() => {
         }
     };
     let modalOpen = false;
+    let isClosing = false; // Guard flag to prevent duplicate close animations
     let targetCenterPosition = null; // Store the position to center on after modal closes
     let clickedElement = null; // Store the clicked element reference
 
@@ -842,6 +844,7 @@ $(document).ready(() => {
     function openModal(element) {
         openSpaceModal = false
         modalOpen = true
+        canScroll = false  // Disable scrolling immediately when modal opens
 
         // Cancel any pending position updates from mouse/wheel handlers
         if (pendingPositionUpdate) {
@@ -888,10 +891,7 @@ $(document).ready(() => {
 
         bodyElement.style.pointerEvents = "none"
         htmlElement.style.pointerEvents = "none";
-        setTimeout(()=> {
-            spaceModal = true
-            escModal = true
-        }, 700)
+        // Flags now set in cloneTimelineConstructor onComplete (removed setTimeout race condition)
 
         // Unlock after animation completes
             isAnimatingCarousel = false;
@@ -1057,6 +1057,11 @@ $(document).ready(() => {
             duration: .7,
             ease: "power2.out",
             onComplete: () => {
+                // Set flags AFTER animation completes (prevents race condition)
+                spaceModal = true;
+                escModal = true;
+                canScroll = false;
+
                 if (track.dataset.canMove === "false") {
                     // Hide plus button in modal completely
                     plus.style.display = 'none'
@@ -1079,8 +1084,6 @@ $(document).ready(() => {
                     TweenMax.to('#close-modal', {
                         onStart: () => {
                             closeModalBtn.style.display = 'block'
-                            closeModalBtn.style.zIndex = '10003' // Above slide images
-                            numarJos.style.zIndex = '10003' // Keep numbering above slide images
                         },
                         autoAlpha: 1,
                         duration: .5,
@@ -1640,7 +1643,47 @@ $(document).ready(() => {
             pendingPositionUpdate = null;
         }, 300)
     }
-    window.onwheel = e => {
+    window.addEventListener('wheel', (e) => {
+        // Allow natural scrolling in student detail view
+        if (escAnimatieElev) {
+            return; // Don't handle wheel events - let browser handle natural scrolling
+        }
+
+        // Handle modal navigation (BEFORE canScroll check)
+        if (track.dataset.lightBox === "true") {
+            e.preventDefault(); // Prevent page scroll in modal
+
+            // Accumulate wheel delta for threshold detection
+            wheelAccumulator += e.deltaY
+
+            // Clear existing timeout
+            if (wheelNavigationTimeout) {
+                clearTimeout(wheelNavigationTimeout)
+            }
+
+            // Set debounce timeout - trigger navigation after wheel stops
+            wheelNavigationTimeout = setTimeout(() => {
+                const threshold = 50 // Minimum delta to trigger navigation
+
+                if (Math.abs(wheelAccumulator) > threshold) {
+                    if (wheelAccumulator < 0) {
+                        // Scroll up = previous student
+                        navigateStudent('prev')
+                    } else {
+                        // Scroll down = next student
+                        navigateStudent('next')
+                    }
+                }
+
+                // Reset accumulator
+                wheelAccumulator = 0
+            }, 50) // 150ms debounce
+
+            return;
+        }
+
+        // Prevent default for carousel navigation
+        e.preventDefault();
 
         if (!canScroll) return;
 
@@ -1650,15 +1693,7 @@ $(document).ready(() => {
             return;
         }
 
-        if (track.dataset.lightBox === "true") {
-            // Behave exactly like close button
-            closeModalBtn.click()
-            return;
-        }
         if (track.dataset.canMove === "false") return;
-
-        // Prevent default to stop page scroll
-        e.preventDefault();
 
         const mouseDelta = e.deltaY,
             maxDelta = track.offsetWidth * 2,
@@ -1701,7 +1736,7 @@ $(document).ready(() => {
             track.dataset.prevPercentage = track.dataset.percentage;
             pendingPositionUpdate = null;
         }, 301)
-    }
+    }, { passive: false });
 
     //// Helper function to convert carousel position (1-55) to student number (1-28)
     function getStudentNumber(carouselPosition) {
@@ -1830,15 +1865,16 @@ $(document).ready(() => {
     //// functie inchidere modal
     let openSpaceModal = false
     closeModalBtn.addEventListener('click', () => {
+        // Guard against duplicate close clicks
+        if (isClosing) return;
+        isClosing = true;
+
         // Clean up all slide images when modal closes
         const slideImages = document.querySelectorAll('[id^="clone-image-next"]')
         slideImages.forEach(img => {
             gsap.killTweensOf(img)
             img.remove()
         })
-
-        // Reset z-index counter
-        slideImageZIndex = 10001
 
         gsap.killTweensOf('#close-modal')
         TweenMax.to('#close-modal', {
@@ -1851,6 +1887,7 @@ $(document).ready(() => {
         })
         numePersoana.removeEventListener('click', animatieElev)
         plus.removeEventListener('click', animatieElev)
+        cancelNameAnimation() // Cancel orphaned name animation timeout
 
         // Hide thumbnail carousel
         hideThumbnailCarousel()
@@ -1905,11 +1942,21 @@ $(document).ready(() => {
             openSpaceModal = true
         },700) // Adjusted timing
 
+        // Reset modalOpen immediately to prevent ESC double-trigger
+        modalOpen = false;
+
         setTimeout(()=> {
             // Clear the target position after modal fully closes
             targetCenterPosition = null;
             clickedElement = null;
-            modalOpen = false
+            // Complete state reset - prevent stale flags
+            escModal = false;
+            spaceModal = false;
+            escAnimatieElev = false;
+            canScroll = true;
+            track.dataset.lightBox = "false";
+            track.dataset.canMove = "true";
+            isClosing = false; // Reset guard flag
         },1200) // Adjusted timing
     })
 
@@ -1987,7 +2034,8 @@ $(document).ready(() => {
 
         spaceModal = false
         escAnimatieElev = true
-        bodyElement.style.overflowY = "visible"
+        // Unlock scrolling completely for student detail view
+        bodyElement.style.overflow = "visible"
         htmlElement.style.overflow = "visible";
         
         // Hide thumbnail carousel when opening student details
@@ -2107,6 +2155,11 @@ $(document).ready(() => {
         // Optimized exit animation with reverse stagger
         const exitTl = gsap.timeline({
             onComplete: () => {
+                // Reset flags to match UI state after exiting student detail view
+                escAnimatieElev = false;
+                escModal = true;
+                spaceModal = true;
+
                 if (elevi.classList.contains('active') === true) {
                     bodyElement.style.overflowY = "hidden"
                     htmlElement.style.overflow = "hidden";
