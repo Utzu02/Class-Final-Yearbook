@@ -1354,8 +1354,8 @@ body {
     height: 100%;
     top: 0;
     transform: none;
-    padding-top: 70px;
-    padding-bottom: 20px;
+    padding-top: 10dvh;
+    padding-bottom: 10dvh;
   }
   #contact {
     min-height: 100vh;
@@ -1375,7 +1375,7 @@ body {
   }
   
   #numarjos {
-    bottom: 8%;
+    bottom: 8dvh;
   }
 
   #thumb-scroll-left, #thumb-scroll-right {
@@ -1433,7 +1433,7 @@ body {
   }
 
   #contentScroll {
-    padding: 40px 30px;
+    padding: 5dvh 30px;
   }
 
   .contentTitle {
