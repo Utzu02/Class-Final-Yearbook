@@ -200,33 +200,6 @@ $(document).ready(() => {
             thumbnailItems.push(thumb)  // Cache for performance
         }
 
-        // EVENT DELEGATION: Single listeners on parent instead of 165 individual listeners
-        thumbnailTrack.addEventListener('mouseenter', (e) => {
-            const thumb = e.target.closest('.thumbnail-item')
-            if (!thumb) return
-
-            const img = thumb.querySelector('img')
-            const index = parseInt(thumb.dataset.carouselIndex)
-
-            if (index !== currentCarouselIndex) {
-                gsap.killTweensOf(img) // Kill previous animation
-                gsap.to(img, { scale: 1.1, duration: 0.3 })
-            }
-        }, true) // Use capture phase for better performance
-
-        thumbnailTrack.addEventListener('mouseleave', (e) => {
-            const thumb = e.target.closest('.thumbnail-item')
-            if (!thumb) return
-
-            const img = thumb.querySelector('img')
-            const index = parseInt(thumb.dataset.carouselIndex)
-
-            if (index !== currentCarouselIndex) {
-                gsap.killTweensOf(img) // Kill previous animation
-                gsap.to(img, { scale: 1, duration: 0.3 })
-            }
-        }, true) // Use capture phase
-
         thumbnailTrack.addEventListener('click', (e) => {
             const thumb = e.target.closest('.thumbnail-item')
             if (!thumb) return
@@ -315,25 +288,6 @@ $(document).ready(() => {
         }
         
         switchToThumbnail(newIndex, slideDirection)
-    }
-    
-    //// Scroll thumbnails left or right
-    function scrollThumbnails(direction) {
-        const thumbWidth = 92 // 80px + 12px gap
-        const visibleCount = Math.floor(thumbnailContainer.offsetWidth / thumbWidth)
-        const maxScroll = Math.max(0, (CONFIG.STUDENT_COUNT - visibleCount) * thumbWidth)
-        
-        if (direction === 'left') {
-            thumbnailScrollPosition = Math.max(0, thumbnailScrollPosition - thumbWidth * 3)
-        } else {
-            thumbnailScrollPosition = Math.min(maxScroll, thumbnailScrollPosition + thumbWidth * 3)
-        }
-        
-        gsap.to(thumbnailTrack, {
-            x: -thumbnailScrollPosition,
-            duration: 0.4,
-            ease: 'power2.out'
-        })
     }
     
     //// Switch to a different thumbnail
@@ -476,9 +430,10 @@ $(document).ready(() => {
     function centerActiveThumbnail(carouselIndex) {
         const thumbWidth = 89 // 89px width with 0px gap
         const containerWidth = thumbnailContainer.offsetWidth
-        const visibleCount = Math.floor(containerWidth / thumbWidth) // Calculate dynamically
         const targetPosition = carouselIndex * thumbWidth - (containerWidth / 2) + (thumbWidth / 2)
-        const maxScroll = Math.max(0, (images.length - visibleCount) * thumbWidth)
+        
+        const totalWidth = images.length * thumbWidth
+        const maxScroll = Math.max(0, totalWidth - containerWidth)
         
         thumbnailScrollPosition = Math.max(0, Math.min(maxScroll, targetPosition))
 

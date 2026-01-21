@@ -232,12 +232,6 @@ body {
 }
 
 #next:hover {
-  background: rgba(255, 255, 255, 0.15);
-  -webkit-transform: translateY(-50%) scale(1.1);
-  -ms-transform: translateY(-50%) scale(1.1);
-  transform: translateY(-50%) scale(1.1);
-  -webkit-box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
 
@@ -296,12 +290,6 @@ body {
 }
 
 #prev:hover {
-  background: rgba(255, 255, 255, 0.15);
-  -webkit-transform: translateY(-50%) scale(1.1);
-  -ms-transform: translateY(-50%) scale(1.1);
-  transform: translateY(-50%) scale(1.1);
-  -webkit-box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
 
@@ -869,7 +857,6 @@ body {
   height: 100%;
   overflow: hidden;
   position: relative;
-  border-radius: 8px;
   padding: 0px;
   pointer-events: auto;
 }
