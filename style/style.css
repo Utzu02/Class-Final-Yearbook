@@ -607,11 +607,6 @@ body {
     font-size: 1.05rem !important;
   }
 
-  #TextBox {
-
-    font-size: .9rem;
-  }
-
   .diriginte {
     font-size: 18px !important;
   }
@@ -729,7 +724,6 @@ body {
 }
 
 .diriginte {
-  position: absolute;
   width: 320px;
   color: white;
   text-align: center;
@@ -1182,7 +1176,7 @@ body {
 
 /* Back Button */
 #iesireSectiune {
-  position: absolute;
+  position: fixed;
   left: 40px;
   top: 40px;
   z-index: 5;
@@ -1309,6 +1303,7 @@ body {
   flex-direction: column;
   justify-content: space-evenly;
 }
+
 /* Responsive Design */
 @media screen and (max-width: 1024px) {
   #despreContainer {
@@ -1317,26 +1312,70 @@ body {
     -ms-flex-direction: column;
     flex-direction: column;
   }
+  #TextBox {
+    font-size: 14px;
+  }
+  #textGalerie {
+    padding: 0;
+    margin: 0;
+    font-size: 24px;
+  }
+  #container {
+    flex-direction: column;
+    gap: 5vh;
+    margin-top: 2vh !important;
+    margin-bottom: 5vh;
+  }
+  #textdiriginti {
+    margin: 0;
+    padding: 0;
+    font-size: 24px;
+    margin-bottom: 5vh;
+  }
+  #item-1 {
+    width: 90%;
+  }
+  #item-2 {
+    width: 80%;
+    padding: 0;
+  }
+  .diriginti {
+    padding: 0;
+    gap: 40px;
+  }
+  .diriginte {
+    width: 250px;
+    font-size: 16px;
+  }
+
+  .diriginte .flexitem {
+    height: 300px;
+  }
 
   .contentImages {
     justify-content: center;
     align-items: center;
   }
+
   #citat {
     margin: 0 !important;
   }
+
   .echipacontainter {
     display: flex;
     flex-direction: column;
   }
+
   .flexitemm {
-  width: 70%;
-  height: 300px;
+    width: 70%;
+    height: 300px;
   }
+
   .membru {
     align-items: center;
     justify-content: center;
   }
+
   #containercontact {
     height: 100%;
     top: 0;
@@ -1344,14 +1383,17 @@ body {
     padding-top: 10dvh;
     padding-bottom: 10dvh;
   }
+
   #contact {
     min-height: 100vh;
     overflow-y: scroll;
   }
+
   .sectiuni {
     width: 70vw;
   }
-  #despreContent p{
+
+  #despreContent p {
     font-size: 16px;
   }
 
@@ -1360,25 +1402,28 @@ body {
     left: 0;
     bottom: 0;
   }
-  
+
   #numarjos {
-    bottom: 8dvh;
+    bottom: 70px;
   }
 
-  #thumb-scroll-left, #thumb-scroll-right {
+  #thumb-scroll-left,
+  #thumb-scroll-right {
     display: none;
   }
 
-  #image-nav-left, #image-nav-right {
+  #image-nav-left,
+  #image-nav-right {
     display: flex;
     width: 48px;
     height: 48px;
     font-size: 36px;
   }
+
   #image-nav-right {
     right: 3%;
   }
-  
+
   #numePersoana {
     font-size: 24px;
   }
@@ -1407,12 +1452,6 @@ body {
 
   #despreElev {
     overflow-y: scroll;
-  }
-
-  #iesireSectiune {
-    position: fixed;
-    top: 40px;
-    left: 40px;
   }
 
   #despreContainer {

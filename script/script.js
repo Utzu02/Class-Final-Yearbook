@@ -6,9 +6,11 @@ $(document).ready(() => {
         'wrapAround': true,
         'disableScrolling': true,
         'maxHeight': 700,
-        'showImageNumberLabel': false,
+        'maxWidth': 1000,
+        'showImageNumberLabel': true,
         'alwaysShowNavOnTouchDevices': true,
-        'positionFromTop': 140
+        'positionFromTop': 140,
+        'albumLabel': "Imaginea %1 din %2"
     })
 
     //// Configuration Constants
@@ -123,8 +125,6 @@ $(document).ready(() => {
     var currentHoverImage;
     var escModal = false;
     var escAnimatieElev = false;
-    let letters = 0
-    let tween = 0
     let lastX = 27;
     let resized = false
     let spaceModal = false
@@ -133,7 +133,7 @@ $(document).ready(() => {
     let pendingPositionUpdate = null  // Store timeout ID for position updates
     let lastMoveTime = 0  // For throttling mouse move
     let rafId = null  // RequestAnimationFrame ID for smooth animations
-    
+
     //// Thumbnail carousel variables
     let thumbnailCarousel = null
     let thumbnailContainer = null
@@ -149,7 +149,7 @@ $(document).ready(() => {
     track.dataset.percentage = 0;
     var canScroll = true
     document.getElementById('nrtotal').textContent = (document.querySelectorAll(".image").length - 1) / 2
-    
+
     //// Create thumbnail carousel
     createThumbnailCarousel()
 
@@ -163,7 +163,7 @@ $(document).ready(() => {
         thumbnailTrack = document.getElementById('thumbnail-track')
         const leftScroll = document.getElementById('thumb-scroll-left')
         const rightScroll = document.getElementById('thumb-scroll-right')
-        
+
         // Add event listeners for scroll arrows
         leftScroll.addEventListener('click', () => {
             restartAnimation(leftScroll, 'rotate')
@@ -173,7 +173,7 @@ $(document).ready(() => {
             restartAnimation(rightScroll, 'rotate')
             scrollThumbnailsHorizontal('right')
         })
-        
+
         // Populate thumbnails with ALL carousel images (including duplicates)
         for (let i = 0; i < images.length; i++) {
             const thumb = document.createElement('div')
@@ -211,11 +211,11 @@ $(document).ready(() => {
                 switchToThumbnail(clickedCarouselIndex, 'left')
             }
         })
-        
+
         // Initialize navigation overlays
         initializeImageNavigation()
     }
-    
+
     //// Scroll thumbnails horizontally
     function scrollThumbnailsHorizontal(direction) {
         const thumbWidth = 89 // 89px width with 0px gap
@@ -226,27 +226,27 @@ $(document).ready(() => {
         const totalWidth = images.length * thumbWidth
         // Max scroll is total width minus visible area
         const maxScroll = Math.max(0, totalWidth - containerWidth)
-        
+
         if (direction === 'left') {
             thumbnailScrollPosition = Math.max(0, thumbnailScrollPosition - scrollAmount)
         } else {
             thumbnailScrollPosition = Math.min(maxScroll, thumbnailScrollPosition + scrollAmount)
         }
-        
+
         gsap.to(thumbnailTrack, {
             x: -thumbnailScrollPosition,
             duration: 0.4,
             ease: 'power2.out'
         })
     }
-    
+
     //// Helper: Restart CSS animation by toggling class
     function restartAnimation(element, className) {
         element.classList.remove(className)
         void element.offsetWidth // Force reflow
         element.classList.add(className)
     }
-    
+
     //// Helper: Cancel and reset name animation timeout
     function cancelNameAnimation() {
         if (window.nameAnimationTimeout) {
@@ -254,12 +254,12 @@ $(document).ready(() => {
             window.nameAnimationTimeout = null
         }
     }
-    
+
     //// Initialize navigation overlays on main image
     function initializeImageNavigation() {
         const leftImageNav = document.getElementById('image-nav-left')
         const rightImageNav = document.getElementById('image-nav-right')
-        
+
         leftImageNav.addEventListener('click', () => {
             restartAnimation(leftImageNav, 'rotate')
             navigateStudent('prev')
@@ -269,14 +269,19 @@ $(document).ready(() => {
             navigateStudent('next')
         })
     }
-    
+
     //// Navigate to previous or next student
     function navigateStudent(direction) {
+        // Only allow navigation in elevi section
+        if (!elevi.classList.contains('active')) {
+            return;
+        }
+
         cancelNameAnimation()
-        
+
         let newIndex
         let slideDirection
-        
+
         if (direction === 'prev') {
             newIndex = currentCarouselIndex - 1
             if (newIndex < 0) newIndex = images.length - 1 // Wrap to last carousel image
@@ -286,30 +291,35 @@ $(document).ready(() => {
             if (newIndex >= images.length) newIndex = 0 // Wrap to first carousel image
             slideDirection = 'left' // Sliding left when going to next
         }
-        
+
         switchToThumbnail(newIndex, slideDirection)
     }
-    
+
     //// Switch to a different thumbnail
     function switchToThumbnail(carouselIndex, direction) {
+        // Only allow thumbnail switching in elevi section
+        if (!elevi.classList.contains('active')) {
+            return;
+        }
+
         if (carouselIndex === currentCarouselIndex) return
-        
+
         const oldIndex = currentCarouselIndex
         currentCarouselIndex = carouselIndex
-        
+
         // Get the exact image from the carousel at this index
         const targetImage = images[carouselIndex]
-        
+
         if (!targetImage) {
             return
         }
-        
+
         // Get student ID for highlighting purposes
         let studentId = parseInt(targetImage.dataset.cnt)
         if (studentId > CONFIG.STUDENT_COUNT) {
             studentId = studentId - CONFIG.STUDENT_COUNT
         }
-        
+
         // Optimized: Update active thumbnail using cached reference
         if (activeThumb) {
             activeThumb.classList.remove('active')
@@ -318,7 +328,7 @@ $(document).ready(() => {
         if (activeThumb) {
             activeThumb.classList.add('active')
         }
-        
+
         // STACKING LOGIC: Intentional stacking for visual effect, but optimized
         // Get all existing slide images ONCE
         const existingSlides = Array.from(document.querySelectorAll('[id^="clone-image-next"]'))
@@ -372,7 +382,7 @@ $(document).ready(() => {
                 }
             }
         })
-        
+
         // Slide the next image in
         gsap.to(nextImg, {
             x: 0,
@@ -385,18 +395,18 @@ $(document).ready(() => {
                 cloneImg.dataset.text = targetImage.dataset.text
                 cloneImg.dataset.src = targetImage.dataset.src
                 cloneImg.dataset.pers = targetImage.dataset.pers
-                
+
                 // Reset cloneImg position
-                gsap.set(cloneImg, { 
+                gsap.set(cloneImg, {
                     x: 0,
                     clearProps: 'transform,force3D,willChange'
                 })
-                
+
                 // Remove the temporary next image
                 nextImg.remove()
             }
         })
-        
+
         // Reset name to initial state before updating text
         numePersoana.classList.remove('animate-in')
         gsap.set(numePersoana, { opacity: 0, visibility: 'visible' })
@@ -407,10 +417,10 @@ $(document).ready(() => {
         window.nameAnimationTimeout = setTimeout(() => {
             numePersoana.classList.add('animate-in')
         }, 200)
-        
+
         // Update target position for centering when modal closes
         targetCenterPosition = carouselIndex + 1 // Carousel position for centering
-        
+
         // Calculate student ID for the number display (1-28)
         const displayStudentId = studentId > CONFIG.STUDENT_COUNT ? studentId - CONFIG.STUDENT_COUNT : studentId
 
@@ -421,20 +431,20 @@ $(document).ready(() => {
             duration: .4,
             ease: "power4.InOut",
         })
-        
+
         // Auto-scroll thumbnails to keep active one visible
         centerActiveThumbnail(carouselIndex)
     }
-    
+
     //// Center active thumbnail in view
     function centerActiveThumbnail(carouselIndex) {
         const thumbWidth = 89 // 89px width with 0px gap
         const containerWidth = thumbnailContainer.offsetWidth
         const targetPosition = carouselIndex * thumbWidth - (containerWidth / 2) + (thumbWidth / 2)
-        
+
         const totalWidth = images.length * thumbWidth
         const maxScroll = Math.max(0, totalWidth - containerWidth)
-        
+
         thumbnailScrollPosition = Math.max(0, Math.min(maxScroll, targetPosition))
 
         gsap.killTweensOf(thumbnailTrack) // Kill previous animation
@@ -444,7 +454,7 @@ $(document).ready(() => {
             ease: 'power2.out'
         })
     }
-    
+
     //// Show thumbnail carousel
     function showThumbnailCarousel(activeCarouselIndex) {
         currentCarouselIndex = activeCarouselIndex
@@ -480,15 +490,15 @@ $(document).ready(() => {
             { x: 0, autoAlpha: 1, duration: 1, ease: 'power2.out' }
         )
     }
-    
+
     //// Show image navigation overlays
     function showImageNavigation() {
         const leftNav = document.getElementById('image-nav-left')
         const rightNav = document.getElementById('image-nav-right')
-        
+
         leftNav.style.display = 'flex'
         rightNav.style.display = 'flex'
-        
+
         gsap.fromTo(leftNav,
             { x: -30, autoAlpha: 0 },
             { x: 0, autoAlpha: 0.7, duration: 0.5, delay: 0.5, ease: 'power2.out' }
@@ -498,12 +508,12 @@ $(document).ready(() => {
             { x: 0, autoAlpha: 0.7, duration: 0.5, delay: 0.5, ease: 'power2.out' }
         )
     }
-    
+
     //// Hide image navigation overlays
     function hideImageNavigation() {
         const leftNav = document.getElementById('image-nav-left')
         const rightNav = document.getElementById('image-nav-right')
-        
+
         gsap.to([leftNav, rightNav], {
             autoAlpha: 0,
             duration: 0.3,
@@ -514,7 +524,7 @@ $(document).ready(() => {
             }
         })
     }
-    
+
     //// Hide thumbnail carousel
     function hideThumbnailCarousel() {
         gsap.to(thumbnailCarousel, {
@@ -529,7 +539,7 @@ $(document).ready(() => {
             }
         })
     }
-    
+
     //// fade-in continut pagina
     TweenMax.to('body', {
         autoAlpha: 1,
@@ -703,7 +713,6 @@ $(document).ready(() => {
         else FadeIn.reverse();
     }
     //// marire imagine tot ecranul
-    var ap = [];
     var modal_cnt = CONFIG.STUDENT_COUNT;
     let i = 0;
     images.forEach((element) => {
@@ -782,12 +791,11 @@ $(document).ready(() => {
                 plus.click()
             }
         }
-        else if(evt.keyCode === 37) {
-            if(modalOpen===false) prevBtn.click()
+        else if (evt.keyCode === 37) {
+            if (modalOpen === false) prevBtn.click()
         }
-        else if(evt.keyCode === 39)
-        {
-            if(modalOpen===false) nextBtn.click()
+        else if (evt.keyCode === 39) {
+            if (modalOpen === false) nextBtn.click()
         }
     };
     let modalOpen = false;
@@ -849,45 +857,45 @@ $(document).ready(() => {
         // Flags now set in cloneTimelineConstructor onComplete (removed setTimeout race condition)
 
         // Unlock after animation completes
-            isAnimatingCarousel = false;
-            cloneTimelineConstructor()
-            plus.removeEventListener('click', openModalPlus)
+        isAnimatingCarousel = false;
+        cloneTimelineConstructor()
+        plus.removeEventListener('click', openModalPlus)
 
-            // Element is already hidden, just get its position for the clone
-            var rect = element.getBoundingClientRect();
-            cloneImg.style.left = rect.left + "px";
-            cloneImg.style.top = rect.top + "px";
-            cloneImg.style.width = element.offsetWidth + "px";
-            cloneImg.style.height = element.offsetHeight + "px";
-            cloneImg.src = element.src;
-            cloneImg.dataset.text = element.dataset.text
-            cloneImg.dataset.src = element.dataset.src
-            cloneImg.dataset.pers = element.dataset.pers;
-            currentHoverImage = element;
-            if (touchSupport) {
-                TweenMax.to('#next', {
-                    autoAlpha: 0,
-                    duration: .5
-                })
-            }
-            if (touchSupport) {
-                TweenMax.to('#prev', {
-                    autoAlpha: 0,
-                    duration: .5
-                })
-            }
-            cloneTimeline.play();
-            bodyElement.style.pointerEvents = "auto"
-            htmlElement.style.pointerEvents = "auto";
+        // Element is already hidden, just get its position for the clone
+        var rect = element.getBoundingClientRect();
+        cloneImg.style.left = rect.left + "px";
+        cloneImg.style.top = rect.top + "px";
+        cloneImg.style.width = element.offsetWidth + "px";
+        cloneImg.style.height = element.offsetHeight + "px";
+        cloneImg.src = element.src;
+        cloneImg.dataset.text = element.dataset.text
+        cloneImg.dataset.src = element.dataset.src
+        cloneImg.dataset.pers = element.dataset.pers;
+        currentHoverImage = element;
+        if (touchSupport) {
+            TweenMax.to('#next', {
+                autoAlpha: 0,
+                duration: .5
+            })
+        }
+        if (touchSupport) {
+            TweenMax.to('#prev', {
+                autoAlpha: 0,
+                duration: .5
+            })
+        }
+        cloneTimeline.play();
+        bodyElement.style.pointerEvents = "auto"
+        htmlElement.style.pointerEvents = "auto";
 
-            // Set the name from the clicked element
-            numePersoana.innerText = element.dataset.text
+        // Set the name from the clicked element
+        numePersoana.innerText = element.dataset.text
 
-            // Delay thumbnail carousel until after modal opening animation (0.9s total)
-            setTimeout(() => {
-                showThumbnailCarousel(clickedPosition - 1)
-                showImageNavigation()
-            }, 700)
+        // Delay thumbnail carousel until after modal opening animation (0.9s total)
+        setTimeout(() => {
+            showThumbnailCarousel(clickedPosition - 1)
+            showImageNavigation()
+        }, 700)
 
     }
 
@@ -1049,7 +1057,7 @@ $(document).ready(() => {
             }
         })
     }
-    
+
     //// Reverse animation with power2.out easing
     function reverseCloneAnimation(targetWidth, targetHeight, targetLeft, targetTop) {
         cloneTimeline.kill();
@@ -1120,22 +1128,7 @@ $(document).ready(() => {
     document.querySelectorAll('.flexitemm').forEach((element) => {
         FadeInAnimation(element)
     })
-    var timelineDiriginte = new TimelineLite();
-    /*timelineDiriginte.to(".diriginte", {
-        autoAlpha: 1,
-        filter: 'blur(0px)',
-        y: '0%',
-        ease: "power4.InOut",
-        stagger: .3,
-        delay: .3,
-        duration: .5,
-        force3D: true,
-        lazy: false,
-        onComplete: () => {
-            canHoverDespre = "true"
-        }
-        
-    })*/
+
     ScrollTrigger.create({
         trigger: "#textdiriginti",
         start: "top 60%",
@@ -1155,46 +1148,54 @@ $(document).ready(() => {
             canHoverDespre = false;
         });
     }
-    //// animatie text sectiune XII A
 
-    /*  onStart: () => {
-          textBox.style.display = 'block'
-      },*/
+    //// animatie text sectiune XII A
     splitTextTimeline.from(mySplitText.lines,
         {
             onReverseComplete: () => {
-                document.getElementById('container').style.display = 'none'
-                x = CONFIG.STUDENT_COUNT;
-                let i = 0;
-                /*for (const image of track.getElementsByClassName("image")) {
-                    i = i + 50 / CONFIG.STUDENT_COUNT;
-                    image.animate({
+                // Only run carousel animation if transitioning TO elevi section
+                if (elevi.classList.contains('active')) {
+                    document.getElementById('container').style.display = 'none'
+                    x = CONFIG.STUDENT_COUNT;
+                    let i = 0;
+                    /*for (const image of track.getElementsByClassName("image")) {
+                        i = i + 50 / CONFIG.STUDENT_COUNT;
+                        image.animate({
+                            objectPosition: `50% 50%`
+                        }, { duration: CONFIG.ANIMATION.CAROUSEL_DURATION, fill: "forwards" });
+                    }*/
+                    /*cloneImg.animate({
                         objectPosition: `50% 50%`
+                    }, { duration: CONFIG.ANIMATION.CAROUSEL_DURATION, fill: "forwards" });*/
+                    track.dataset.prevPercentage = 0;
+                    track.animate({
+                        transform: `translate(-50%, -50%)`
                     }, { duration: CONFIG.ANIMATION.CAROUSEL_DURATION, fill: "forwards" });
-                }*/
-                /*cloneImg.animate({
-                    objectPosition: `50% 50%`
-                }, { duration: CONFIG.ANIMATION.CAROUSEL_DURATION, fill: "forwards" });*/
-                track.dataset.prevPercentage = 0;
-                track.animate({
-                    transform: `translate(-50%, -50%)`
-                }, { duration: CONFIG.ANIMATION.CAROUSEL_DURATION, fill: "forwards" });
-                lastX = x;
-                t2.progress(0);
-                t2.play();
-                canHover = true
-                textBox.style.display = 'none'
+                    lastX = x;
+                    t2.progress(0);
+                    t2.play();
+                    canHover = true
+                    textBox.style.display = 'none'
+                }
             },
         });
     splitTextTimeline.play();
 
     //// intrare sectiune elevi
     elevi.addEventListener('click', () => {
-        ////if (elevi.classList.contains('active') === false && canHover === "false") 
+        ////if (elevi.classList.contains('active') === false && canHover === "false")
         if (elevi.classList.contains('active') === false) {
             openSpaceModal = true
             spaceModal = false
             escModal = false
+
+            // Ensure modal controls are hidden when entering elevi section
+            // (they should only show when modal is actually opened)
+            const leftNav = document.getElementById('image-nav-left')
+            const rightNav = document.getElementById('image-nav-right')
+            leftNav.style.display = 'none'
+            rightNav.style.display = 'none'
+            thumbnailCarousel.style.display = 'none'
 
             if (despre.classList.contains('active') === true) {
                 if (touchSupport) {
@@ -1261,6 +1262,9 @@ $(document).ready(() => {
                 splitTextTimeline.reverse();
             }
             else {
+                canScroll = true
+                track.dataset.canMove = "true"
+
                 if (touchSupport) {
                     TweenMax.to('#prev', {
                         autoAlpha: 1,
@@ -1301,12 +1305,25 @@ $(document).ready(() => {
                 }
             }, 1500)
             if (elevi.classList.contains('active') === true) {
-                
-            plus.removeEventListener('click', openModalPlus)
-            plus.removeEventListener('click', animatieElev)
-            openSpaceModal = false
-            spaceModal = false
-            escModal = false
+
+                plus.removeEventListener('click', openModalPlus)
+                plus.removeEventListener('click', animatieElev)
+                openSpaceModal = false
+                spaceModal = false
+                escModal = false
+
+                // Close modal if it's open
+                if (track.dataset.lightBox === "true") {
+                    closeModalBtn.click()
+                }
+
+                // Force hide modal controls immediately to prevent them from appearing in other sections
+                const leftNav = document.getElementById('image-nav-left')
+                const rightNav = document.getElementById('image-nav-right')
+                gsap.killTweensOf([leftNav, rightNav, thumbnailCarousel])
+                leftNav.style.display = 'none'
+                rightNav.style.display = 'none'
+                thumbnailCarousel.style.display = 'none'
 
                 console.log("DA")
                 TweenMax.to('#numePersoana', {
@@ -1446,11 +1463,24 @@ $(document).ready(() => {
             }
             else {
 
-            plus.removeEventListener('click', openModalPlus)
-            plus.removeEventListener('click', animatieElev)
-            openSpaceModal = false
-            spaceModal = false
-            escModal = false
+                plus.removeEventListener('click', openModalPlus)
+                plus.removeEventListener('click', animatieElev)
+                openSpaceModal = false
+                spaceModal = false
+                escModal = false
+
+                // Close modal if it's open
+                if (track.dataset.lightBox === "true") {
+                    closeModalBtn.click()
+                }
+
+                // Force hide modal controls immediately to prevent them from appearing in other sections
+                const leftNav = document.getElementById('image-nav-left')
+                const rightNav = document.getElementById('image-nav-right')
+                gsap.killTweensOf([leftNav, rightNav, thumbnailCarousel])
+                leftNav.style.display = 'none'
+                rightNav.style.display = 'none'
+                thumbnailCarousel.style.display = 'none'
 
                 TweenMax.to('#numePersoana', {
                     autoAlpha: 0,
@@ -1505,24 +1535,6 @@ $(document).ready(() => {
         }
     })
 
-    //// inchidere modal (vechi)
-
-    /*imageViewer.addEventListener('click', (e) => {
-        if (document.elementsFromPoint(e.clientX, e.clientY)[0].classList.contains("modal-content") === false) {
-            track.dataset.canMove = "true";
-            track.dataset.lightBox = "false"
-            TweenMax.to('#image-viewer', {
-                display: "none",
-                duration: 0
-            })
-            TweenMax.to('.modal-content', {
-                scale: 0,
-                duration: 0
-            })
-        }
-    })*/
-
-    //// recalcularea pozitiei plus pentru redimensionarea paginii
 
     //// calculare pozitie plus pe pagina (mijlocul imaginii x)
     function setarePlus() {
@@ -1605,7 +1617,8 @@ $(document).ready(() => {
         }
 
         // Handle modal navigation (BEFORE canScroll check)
-        if (track.dataset.lightBox === "true") {
+        // Only allow modal navigation in elevi section
+        if (track.dataset.lightBox === "true" && elevi.classList.contains('active')) {
             e.preventDefault(); // Prevent page scroll in modal
 
             // Accumulate wheel delta for threshold detection
@@ -1637,18 +1650,19 @@ $(document).ready(() => {
             return;
         }
 
+        // Only handle carousel scrolling if in elevi section and carousel is enabled
+        if (!canScroll || track.dataset.canMove === "false" || !elevi.classList.contains('active')) {
+            return; // Allow normal page scrolling
+        }
+
         // Prevent default for carousel navigation
         e.preventDefault();
-
-        if (!canScroll) return;
 
         // Don't handle wheel events during click animations - just cancel the animation
         if (isAnimatingCarousel) {
             isAnimatingCarousel = false;
             return;
         }
-
-        if (track.dataset.canMove === "false") return;
 
         const mouseDelta = e.deltaY,
             maxDelta = track.offsetWidth * 2,
@@ -1740,49 +1754,6 @@ $(document).ready(() => {
         x = Math.max(1, Math.min(CONFIG.TOTAL_IMAGES, x));
     }
 
-    //// Modern hover effects for plus button
-    plus.addEventListener('mouseover', () => {
-        if (canHover && images[x - 1]) {
-            gsap.killTweensOf(images[x - 1]) // Kill previous animation
-            gsap.to(images[x - 1], {
-                autoAlpha: 1,
-                scale: 1.08,
-                y: -10,
-                duration: .35,
-                ease: "power2.out"
-            });
-
-            // Add glow effect to plus button
-            gsap.killTweensOf(plus) // Kill previous animation
-            gsap.to(plus, {
-                scale: 1.15,
-                duration: .3,
-                ease: "back.out(2)"
-            });
-        }
-    })
-
-    plus.addEventListener('mouseleave', () => {
-        if (canHover && curentElem != currentHoverImage && images[x - 1]) {
-            gsap.killTweensOf(images[x - 1]) // Kill previous animation
-            gsap.to(images[x - 1], {
-                autoAlpha: 0.8,
-                scale: 1,
-                y: 0,
-                duration: .35,
-                ease: "power2.out"
-            });
-
-            // Reset plus button
-            gsap.killTweensOf(plus) // Kill previous animation
-            gsap.to(plus, {
-                scale: 1,
-                duration: .3,
-                ease: "power2.in"
-            });
-        }
-    })
-
     //// fucntie deschidere modal pentru plus
     function openModalPlus() {
         track.dataset.canMove = "false";
@@ -1793,24 +1764,6 @@ $(document).ready(() => {
         plus.removeEventListener('click', openModalPlus)
     }
     plus.addEventListener('click', openModalPlus)
-
-    /* Deschidere modal vechi
-    
-       var element = images[x - 1];
-       track.dataset.canMove = "false";
-       imageViewer.children[1].src = element.src;
-    
-       track.dataset.lightBox = "true"
-       TweenMax.to('.modal-content', {
-           scale: 1,
-           duration: 0.6
-       })
-       TweenMax.to('#image-viewer', {
-           display: "flex",
-           duration: 0
-       })
-    
-       */
 
     //// aflare element curent peste care se afla mouse-ul
     window.onmouseover = e => {
@@ -1856,7 +1809,7 @@ $(document).ready(() => {
         }
 
         // Wait for carousel to center, then update clone to shrink to center position
-        setTimeout(()=> {
+        setTimeout(() => {
             // Update clone timeline to reverse to CENTER position (where element is now)
             // Calculate center screen position for the image
             const viewportWidth = window.innerWidth;
@@ -1887,20 +1840,20 @@ $(document).ready(() => {
                     duration: .5
                 })
             }
-        },400) // Give time for carousel to center
+        }, 400) // Give time for carousel to center
 
-        setTimeout(()=>{
+        setTimeout(() => {
             TweenMax.to('#checkDiv', {
                 autoAlpha: 1,
                 duration: .5
             })
             openSpaceModal = true
-        },700) // Adjusted timing
+        }, 700) // Adjusted timing
 
         // Reset modalOpen immediately to prevent ESC double-trigger
         modalOpen = false;
 
-        setTimeout(()=> {
+        setTimeout(() => {
             // Clear the target position after modal fully closes
             targetCenterPosition = null;
             clickedElement = null;
@@ -1912,7 +1865,7 @@ $(document).ready(() => {
             track.dataset.lightBox = "false";
             track.dataset.canMove = "true";
             isClosing = false; // Reset guard flag
-        },1200) // Adjusted timing
+        }, 1200) // Adjusted timing
     })
 
 
@@ -1992,7 +1945,7 @@ $(document).ready(() => {
         // Unlock scrolling completely for student detail view
         bodyElement.style.overflow = "visible"
         htmlElement.style.overflow = "visible";
-        
+
         // Hide thumbnail carousel when opening student details
         hideThumbnailCarousel()
         // Hide image navigation
@@ -2009,7 +1962,7 @@ $(document).ready(() => {
         document.getElementById('melodiePref').src = elemDespre.dataset.src
         if (cloneImg.dataset.pers === 'tirca') document.getElementById('melodiePref').style.display = 'none'
         else document.getElementById('melodiePref').style.display = 'block'
-        
+
         // Optimized animation with staggered elements
         const tl = gsap.timeline({
             onComplete: () => {
@@ -2018,13 +1971,13 @@ $(document).ready(() => {
                 gsap.set("#despreElev", { clearProps: "willChange" });
             }
         });
-        
+
         // Main overlay fade in
-        tl.fromTo("#despreElev", 
+        tl.fromTo("#despreElev",
             {
                 autoAlpha: 0,
                 display: "none",
-            }, 
+            },
             {
                 autoAlpha: 1,
                 display: "block",
@@ -2032,64 +1985,64 @@ $(document).ready(() => {
                 ease: "power2.out",
             }
         )
-        // Sidebar slides in from left with fade
-        .fromTo("#despreSidebar",
-            {
-                x: -50,
-                autoAlpha: 0,
-            },
-            {
-                x: 0,
-                autoAlpha: 1,
-                duration: 0.5,
-                ease: "power3.out",
-            },
-            "-=0.2"
-        )
-        // Content area slides in from right with fade
-        .fromTo("#despreContent",
-            {
-                x: 50,
-                autoAlpha: 0,
-            },
-            {
-                x: 0,
-                autoAlpha: 1,
-                duration: 0.5,
-                ease: "power3.out",
-            },
-            "-=0.4"
-        )
-        // Stagger sidebar elements
-        .fromTo(["#despreSidebar #pozaelev", "#titluElev", "#despreJos", "#melodiePref"],
-            {
-                y: 20,
-                autoAlpha: 0,
-            },
-            {
-                y: 0,
-                autoAlpha: 1,
-                duration: 0.4,
-                stagger: 0.08,
-                ease: "back.out(1.2)",
-            },
-            "-=0.3"
-        )
-        // Stagger content elements
-        .fromTo(["#contentScroll .contentTitle", "#contentScroll p", ".contentImages", "#citat"],
-            {
-                y: 30,
-                autoAlpha: 0,
-            },
-            {
-                y: 0,
-                autoAlpha: 1,
-                duration: 0.5,
-                stagger: 0.1,
-                ease: "power2.out",
-            },
-            "-=0.5"
-        );
+            // Sidebar slides in from left with fade
+            .fromTo("#despreSidebar",
+                {
+                    x: -50,
+                    autoAlpha: 0,
+                },
+                {
+                    x: 0,
+                    autoAlpha: 1,
+                    duration: 0.5,
+                    ease: "power3.out",
+                },
+                "-=0.2"
+            )
+            // Content area slides in from right with fade
+            .fromTo("#despreContent",
+                {
+                    x: 50,
+                    autoAlpha: 0,
+                },
+                {
+                    x: 0,
+                    autoAlpha: 1,
+                    duration: 0.5,
+                    ease: "power3.out",
+                },
+                "-=0.4"
+            )
+            // Stagger sidebar elements
+            .fromTo(["#despreSidebar #pozaelev", "#titluElev", "#despreJos", "#melodiePref"],
+                {
+                    y: 20,
+                    autoAlpha: 0,
+                },
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    duration: 0.4,
+                    stagger: 0.08,
+                    ease: "back.out(1.2)",
+                },
+                "-=0.3"
+            )
+            // Stagger content elements
+            .fromTo(["#contentScroll .contentTitle", "#contentScroll p", ".contentImages", "#citat"],
+                {
+                    y: 30,
+                    autoAlpha: 0,
+                },
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    duration: 0.5,
+                    stagger: 0.1,
+                    ease: "power2.out",
+                },
+                "-=0.5"
+            );
     }
 
     //// iesire animatie intrare elevi
@@ -2098,7 +2051,7 @@ $(document).ready(() => {
 
         spaceModal = true
         despreElev.position = "absolute";
-        
+
         // Show thumbnail carousel and navigation when returning to modal
         if (track.dataset.lightBox === "true") {
             setTimeout(() => {
@@ -2106,7 +2059,7 @@ $(document).ready(() => {
                 showImageNavigation()
             }, 300)
         }
-        
+
         // Optimized exit animation with reverse stagger
         const exitTl = gsap.timeline({
             onComplete: () => {
@@ -2123,7 +2076,7 @@ $(document).ready(() => {
                 canScroll = true
             }
         });
-        
+
         // Fade out content elements in reverse
         exitTl.to(["#citat", ".contentImages", "#contentScroll p", "#contentScroll .contentTitle"],
             {
@@ -2134,46 +2087,46 @@ $(document).ready(() => {
                 ease: "power2.in",
             }
         )
-        // Fade out sidebar elements
-        .to(["#melodiePref", "#despreJos", "#titluElev", "#despreSidebar #pozaelev"],
-            {
-                y: -15,
-                autoAlpha: 0,
-                duration: 0.25,
-                stagger: 0.04,
-                ease: "power2.in",
-            },
-            "-=0.15"
-        )
-        // Slide out sidebar and content
-        .to("#despreSidebar",
-            {
-                x: -30,
-                autoAlpha: 0,
-                duration: 0.3,
-                ease: "power2.in",
-            },
-            "-=0.1"
-        )
-        .to("#despreContent",
-            {
-                x: 30,
-                autoAlpha: 0,
-                duration: 0.3,
-                ease: "power2.in",
-            },
-            "-=0.3"
-        )
-        // Final overlay fade out
-        .to("#despreElev",
-            {
-                autoAlpha: 0,
-                duration: 0.2,
-                ease: "power1.in",
-                display: "none",
-            },
-            "-=0.1"
-        );
+            // Fade out sidebar elements
+            .to(["#melodiePref", "#despreJos", "#titluElev", "#despreSidebar #pozaelev"],
+                {
+                    y: -15,
+                    autoAlpha: 0,
+                    duration: 0.25,
+                    stagger: 0.04,
+                    ease: "power2.in",
+                },
+                "-=0.15"
+            )
+            // Slide out sidebar and content
+            .to("#despreSidebar",
+                {
+                    x: -30,
+                    autoAlpha: 0,
+                    duration: 0.3,
+                    ease: "power2.in",
+                },
+                "-=0.1"
+            )
+            .to("#despreContent",
+                {
+                    x: 30,
+                    autoAlpha: 0,
+                    duration: 0.3,
+                    ease: "power2.in",
+                },
+                "-=0.3"
+            )
+            // Final overlay fade out
+            .to("#despreElev",
+                {
+                    autoAlpha: 0,
+                    duration: 0.2,
+                    ease: "power1.in",
+                    display: "none",
+                },
+                "-=0.1"
+            );
     }
 
     //// functie incarcare pagina
@@ -2291,30 +2244,30 @@ $(document).ready(() => {
         }
     }
     detectTouchSupport();
-    document.getElementById('checkboxSageti').addEventListener('click',() => {
+    document.getElementById('checkboxSageti').addEventListener('click', () => {
         console.log("check")
         var checkBox = document.getElementById("checkboxSageti");
         if (checkBox.checked === true) {
             console.log("DA")
             touchSupport = true
-                TweenMax.to('#next', {
-                    autoAlpha: 1,
-                    duration: .5
-                })
-                TweenMax.to('#prev', {
-                    autoAlpha: 1,
-                    duration: .5
-                })
+            TweenMax.to('#next', {
+                autoAlpha: 1,
+                duration: .5
+            })
+            TweenMax.to('#prev', {
+                autoAlpha: 1,
+                duration: .5
+            })
         } else {
             touchSupport = false
-                TweenMax.to('#next', {
-                    autoAlpha: 0,
-                    duration: .5
-                })
-                TweenMax.to('#prev', {
-                    autoAlpha: 0,
-                    duration: .5
-                })
+            TweenMax.to('#next', {
+                autoAlpha: 0,
+                duration: .5
+            })
+            TweenMax.to('#prev', {
+                autoAlpha: 0,
+                duration: .5
+            })
         }
     })
     /// resetare splitext pentru resize
@@ -2324,4 +2277,30 @@ $(document).ready(() => {
             init_SplitText();
         }
     })
+    function buttonback() {
+        const el = document.getElementById('iesireSectiune');
+        if (!el) return;
+        const originalParent = el.parentElement;
+        const nextSibling = el.nextSibling;
+        const mq = window.matchMedia('(max-width:1024px)');
+        
+        function update() {
+            if (mq.matches) {
+                // mobil: vrem fixed relativ la viewport -> mutăm în body
+                if (el.parentElement !== document.body) document.body.appendChild(el);
+            } else {
+                // desktop: vrem absolute în container
+                if (el.parentElement !== originalParent) {
+                    if (nextSibling) originalParent.insertBefore(el, nextSibling);
+                    else originalParent.appendChild(el);
+                }
+            }
+        }
+
+        // suport modern + fallback
+        if (mq.addEventListener) mq.addEventListener('change', update);
+        else mq.addListener(update);
+        update();
+    }
+    buttonback();
 })
