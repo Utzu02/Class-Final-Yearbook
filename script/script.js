@@ -2277,30 +2277,4 @@ $(document).ready(() => {
             init_SplitText();
         }
     })
-    function buttonback() {
-        const el = document.getElementById('iesireSectiune');
-        if (!el) return;
-        const originalParent = el.parentElement;
-        const nextSibling = el.nextSibling;
-        const mq = window.matchMedia('(max-width:1024px)');
-        
-        function update() {
-            if (mq.matches) {
-                // mobil: vrem fixed relativ la viewport -> mutăm în body
-                if (el.parentElement !== document.body) document.body.appendChild(el);
-            } else {
-                // desktop: vrem absolute în container
-                if (el.parentElement !== originalParent) {
-                    if (nextSibling) originalParent.insertBefore(el, nextSibling);
-                    else originalParent.appendChild(el);
-                }
-            }
-        }
-
-        // suport modern + fallback
-        if (mq.addEventListener) mq.addEventListener('change', update);
-        else mq.addListener(update);
-        update();
-    }
-    buttonback();
 })
